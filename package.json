@@ -1,0 +1,41 @@
+{
+  "name": "js13k-elevator",
+  "version": "1.0.0",
+  "author": "Daniel Whiffing <danielwhiffing@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://dwhiffing.github.io/js13k-elevator",
+  "scripts": {
+    "dev": "yarn clean; rollup -w -c rollup.config.mjs",
+    "build": "yarn clean; NODE_ENV=production rollup -c rollup.config.mjs",
+    "clean": "rm -rf dist; mkdir dist",
+    "postbuild": "node postbuild.js",
+    "predeploy": "npm run build",
+    "postinstall": "patch-package",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "kontra": "^10.0.1",
+    "patch-package": "^8.0.0",
+    "rollup-plugin-cleanup": "^3.2.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/node": "^22.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "archiver": "^7.0.1",
+    "esbuild": "^0.23.1",
+    "gh-pages": "^6.1.1",
+    "html-minifier": "^4.0.0",
+    "prettier": "^3.3.3",
+    "rollup": "^4.21.0",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-html-bundle": "^0.0.3",
+    "rollup-plugin-kontra": "^1.0.1",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-serve": "^2.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^5.5.4"
+  }
+}
