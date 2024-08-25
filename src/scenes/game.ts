@@ -32,7 +32,7 @@ export const GameScene = ({ canvas }) => {
       y = canvas.height / 2
       background.resize()
     },
-    update(d) {
+    update(delta: number) {
       background.update()
     },
     render() {

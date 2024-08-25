@@ -2,59 +2,30 @@ import { getContext, SpriteClass } from 'kontra'
 // import { createGlow, createLedSprite } from './led'
 
 export const Background = ({ canvas }) => {
-  const leftPanel = new Rect(['#737373', '#666'])
-  const leftPanel2 = new Path(['#555', '#444'])
+  const objs = {
+    floor: new Path(['#444', '#555']),
+    floor2: new Path(['#555', '#555', '#555', '#505050']),
+    ceiling: new Path(['#505050', '#505050', '#505050', '#444']),
 
-  const rightPanel = new Rect(['#737373', '#666'])
-  const rightPanel2 = new Path(['#555', '#444'])
+    leftDoor: new Path(['#A7A7A7', '#A7A7A7', '#888']),
+    rightDoor: new Path(['#A7A7A7', '#A7A7A7', '#888']),
 
-  const topPanel = new Rect(['#737373'])
-  const topPanel2 = new Rect(['#555'])
+    topPanel2: new Path(['#555']),
+    leftPanel2: new Path(['#555', '#444']),
+    rightPanel2: new Path(['#555', '#444']),
 
-  const leftWall = new Path(['#555', '#666'], true)
-  const rightWall = new Path(['#555', '#666'], true)
+    leftPanel: new Path(['#737373', '#666']),
+    rightPanel: new Path(['#737373', '#666']),
+    topPanel: new Path(['#737373']),
 
-  const leftDoor = new Rect(['#A7A7A7', '#A7A7A7', '#888'])
-  const rightDoor = new Rect(['#A7A7A7', '#A7A7A7', '#888'])
-  const ceiling = new Rect(['#505050', '#505050', '#505050', '#444'])
-  const floor = new Rect(['#444', '#555'])
-  const floor2 = new Rect(['#555', '#555', '#555', '#505050'])
+    leftWall: new Path(['#555', '#666'], true),
+    rightWall: new Path(['#555', '#666'], true),
+  }
 
-  // const led = createLedSprite()
-  // const glowSize = 90
-  // const greenGlow = createGlow(0.6, 0.6, 0.55, glowSize)
   return {
     render() {
-      floor.render()
-      floor2.render()
-      ceiling.render()
-      leftDoor.render()
-      rightDoor.render()
-      topPanel2.render()
-      leftPanel2.render()
-      rightPanel2.render()
-      leftPanel.render()
-      rightPanel.render()
-      topPanel.render()
-      leftWall.render()
-      rightWall.render()
+      Object.values(objs).forEach((o) => o.render())
 
-      // const x = canvas.width / 2 + 10 - 166
-      // const y = 92
-      // getContext().drawImage(led, x, y)
-      // getContext().drawImage(
-      //   greenGlow,
-      //   x - glowSize / 2 + 7,
-      //   y - glowSize / 2 + 7,
-      // )
-
-      // const x2 = canvas.width / 2 + 10 + 128
-      // getContext().drawImage(led, x2, y)
-      // getContext().drawImage(
-      //   greenGlow,
-      //   x2 - glowSize / 2 + 7,
-      //   y - glowSize / 2 + 7,
-      // )
     },
     resize() {
       const ch = canvas.height
@@ -85,64 +56,28 @@ export const Background = ({ canvas }) => {
       const o3 = o / 1.5
       // hall height
       const h3 = 40
+      // floor height
+      const f = ch * 0.285
 
-      ceiling.onResize(0, 0, cw, ch / 2 - h3)
-      floor.onResize(0, ch / 2 + h3, cw, ch * 0.285 - h3)
-      floor2.onResize(0, ch / 2 + ch * 0.285, cw, ch - (ch / 2 + ch * 0.285))
-      leftPanel.onResize(o, h2, w, h)
-      leftPanel2.onResize(o + w, h2, o2, h, 0, o4, 0, 0)
-
-      rightPanel.onResize(cw - o - w, h2, w, h)
-      rightPanel2.onResize(cw - o - o2 - w, h2, o2, h, 0, 0, 0, o4)
-
-      topPanel.onResize(o, h2 - w, w2, w)
-      topPanel2.onResize(o + w, h2 - w + w, d, Math.abs(o4))
-
-      leftWall.onResize(0, h2 - w, o, h + w, 0, 0, 0, o3)
-      rightWall.onResize(cw - o, h2 - w, o, h + w, 0, o3, 0, 0)
-
-      leftDoor.onResize(o + w + o2, h2 + o2, d2, d3)
-      rightDoor.onResize(o + w + o2 + d2, h2 + o2, d2, d3)
+      objs.ceiling.onResize(0, 0, cw, ch / 2 - h3)
+      objs.floor.onResize(0, ch / 2 + h3, cw, f - h3)
+      objs.floor2.onResize(0, ch / 2 + f, cw, ch - ch / 2 + f)
+      objs.leftPanel.onResize(o, h2, w, h)
+      objs.leftPanel2.onResize(o + w, h2, o2, h, 0, o4, 0, 0)
+      objs.rightPanel.onResize(cw - o - w, h2, w, h)
+      objs.rightPanel2.onResize(cw - o - o2 - w, h2, o2, h, 0, 0, 0, o4)
+      objs.topPanel.onResize(o, h2 - w, w2, w)
+      objs.topPanel2.onResize(o + w, h2 - w + w, d, Math.abs(o4))
+      objs.leftWall.onResize(0, h2 - w, o, h + w, 0, 0, 0, o3)
+      objs.rightWall.onResize(cw - o, h2 - w, o, h + w, 0, o3, 0, 0)
+      objs.leftDoor.onResize(o + w + o2, h2 + o2, d2, d3)
+      objs.rightDoor.onResize(o + w + o2 + d2, h2 + o2, d2, d3)
     },
     update() {
       // leftDoor.x -= 1
       // rightDoor.x += 1
     },
     shutdown() {},
-  }
-}
-
-export class Rect extends SpriteClass {
-  constructor(colors: string[]) {
-    super({ x: 0, y: 0, width: 0, height: 0, anchor: { x: 0, y: 0 } })
-    this.colors = colors
-  }
-
-  onResize(x, y, width, height) {
-    this.x = x
-    this.y = y
-    this.width = width
-    this.height = height
-  }
-
-  draw() {
-    const angle = (90 / 180) * Math.PI
-    const x1 = this.x
-    const y1 = this.y
-    // calculate gradient line based on angle
-    const x2 = x1 + Math.cos(angle) * this.height
-    const y2 = y1 + Math.sin(angle) * this.height
-    const gradient = this.context.createLinearGradient(x1, y1, x2, y2)
-    // const gradient = this.context.createLinearGradient(0, 0, 0, this.height)
-    this.colors.forEach((c, i) =>
-      gradient.addColorStop(i / this.colors.length, c),
-    )
-    this.context.fillStyle = gradient
-    this.context.beginPath()
-    this.context.rect(0, 0, this.width, this.height)
-    this.context.closePath()
-    this.context.stroke()
-    this.context.fill()
   }
 }
 
@@ -161,31 +96,39 @@ export class Path extends SpriteClass {
   constructor(colors: string[], horizontal = false) {
     super({ x: 0, y: 0, width: 0, height: 0, anchor: { x: 0, y: 0 } })
     this.colors = colors
+    this.horizontal = horizontal
     this.chamferL = 0
     this.chamferR = 0
     this.chamferT = 0
     this.chamferB = 0
-    this.horizontal = horizontal
   }
 
-  onResize(x, y, width, height, chamferT, chamferR, chamferB, chamferL) {
+  onResize(
+    x,
+    y,
+    width,
+    height,
+    chamferT = 0,
+    chamferR = 0,
+    chamferB = 0,
+    chamferL = 0,
+  ) {
     this.x = x
     this.y = y
     this.width = width
     this.height = height
-    this.chamferL = chamferL
-    this.chamferR = chamferR
     this.chamferT = chamferT
+    this.chamferR = chamferR
     this.chamferB = chamferB
+    this.chamferL = chamferL
   }
 
   draw() {
-    const x1 = this.horizontal ? 200 * (this.x < 100 ? 0 : 1) : 0
+    const x1 = this.horizontal ? this.width * (this.x < 100 ? 0 : 1) : 0
     const y1 = 0
-    const x2 = this.horizontal ? 200 * (this.x > 100 ? 0 : 1) : 0
-    const y2 = this.horizontal ? 0 : 200
+    const x2 = this.horizontal ? this.width * (this.x > 100 ? 0 : 1) : 0
+    const y2 = this.horizontal ? 0 : this.height
     const gradient = this.context.createLinearGradient(x1, y1, x2, y2)
-    // const gradient = this.context.createLinearGradient(0, 0, 0, this.height)
     this.colors.forEach((c, i) =>
       gradient.addColorStop(i / this.colors.length, c),
     )
