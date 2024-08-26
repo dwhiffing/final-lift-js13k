@@ -6,13 +6,14 @@ const { canvas } = init()
 
 initPointer()
 function onResize() {
-  canvas.width = clamp(0, 800, window.innerWidth)
+  canvas.width = clamp(0, 600, window.innerWidth)
   canvas.height = clamp(0, 700, window.innerHeight)
   scene.resize()
 }
 
+canvas.width = clamp(0, 600, window.innerWidth)
+canvas.height = clamp(0, 700, window.innerHeight)
 const scene = GameScene({ canvas })
-onResize()
 window.addEventListener('resize', onResize)
 
 GameLoop({

@@ -1,12 +1,12 @@
 import { clamp, getContext, lerp } from 'kontra'
 import { Background } from '../entities/bg'
+
+export let camera = { zoom: 1, x: 0, y: 0 }
+
 export const GameScene = ({ canvas }) => {
   const background = Background({ canvas })
   background.resize()
 
-  let zoom = 1
-  let x = canvas.width / 2
-  let y = canvas.height / 2
   const context = getContext()
 
   const thing = async () => {
@@ -28,8 +28,6 @@ export const GameScene = ({ canvas }) => {
   return {
     shutdown() {},
     resize() {
-      x = canvas.width / 2
-      y = canvas.height / 2
       background.resize()
     },
     update(delta: number) {
@@ -37,9 +35,11 @@ export const GameScene = ({ canvas }) => {
     },
     render() {
       context.save()
-      context.translate(x, y)
-      context.scale(zoom, zoom)
-      context.translate(-x, -y)
+      const w = canvas.width / 2
+      const h = canvas.height / 2
+      context.translate(w + camera.x, h + camera.y)
+      context.scale(camera.zoom, camera.zoom)
+      context.translate(-(w + camera.x), -(h + camera.y))
 
       background.render()
 
