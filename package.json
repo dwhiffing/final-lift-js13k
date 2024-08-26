@@ -14,7 +14,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "kontra": "^10.0.1",
+    "kontra": "^10.0.2",
     "patch-package": "^8.0.0",
     "rollup-plugin-cleanup": "^3.2.1"
   },

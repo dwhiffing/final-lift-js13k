@@ -18,10 +18,10 @@ export default {
   },
   plugins: [
     kontra({
-      gameObject: { group: false, acceleration: false, rotation: false, radius: false, velocity: false, scale: false, anchor: true, ttl: false },
+      gameObject: { group: true, acceleration: false, rotation: false, radius: false, velocity: false, scale: false, anchor: true, ttl: false },
       sprite: { animation: false, image: false },
       tileEngine: false,
-      text: { textAlign: false, newline: false, autoNewline: false, rtl: false, stroke: false },
+      text: { textAlign: true, newline: false, autoNewline: false, rtl: false, stroke: false },
       vector: false,
     }),
     // cleanup({ comments: "some", }),
