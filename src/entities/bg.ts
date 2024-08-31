@@ -1,4 +1,5 @@
 import { clamp, lerp } from 'kontra'
+import { BASE_DURATION } from '../utils'
 import { startTimer } from '../utils/startTimer'
 import { Button } from './Button'
 import { Path } from './Path'
@@ -99,15 +100,21 @@ export const Background = ({ canvas }) => {
   }
 
   return {
+    buttons,
+    doorPosition,
     render() {
       const allObjects = [...Object.values(objs), ...buttons]
       allObjects.forEach((o) => o.render())
-      canvas.style.cursor = buttons.some((b) => b.hovered)
-        ? 'pointer'
-        : 'initial'
     },
     resize,
-    toggleDoor(position = 1, duration = 1200) {
+    toggleButtons(enabled = true) {
+      buttons.forEach((b) => {
+        b.hovered = false
+        b.pressed = false
+        b.disabled = !enabled
+      })
+    },
+    toggleDoor(position = 1, duration = BASE_DURATION) {
       return startTimer(duration, (progress) => {
         doorPosition = clamp(0.1, 1, position === 0 ? 1 - progress : progress)
         resize()

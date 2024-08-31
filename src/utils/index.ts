@@ -1,3 +1,5 @@
+export const BASE_DURATION = 800
+export const TIME_SCALE = 1
 // prettier-ignore
 const SOUNDS = {
   playerHit: [2,,1050,.01,.01,.02,3,1.06,-66,,,.15,,,,,.05,.82,.01,.03],

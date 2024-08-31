@@ -2,6 +2,11 @@ import { init, initPointer, GameLoop, clamp } from 'kontra'
 import { GameScene } from './scenes/game'
 import './zzfx'
 
+declare global {
+  interface Window {
+    __pointerDown: boolean
+  }
+}
 const { canvas } = init()
 
 initPointer()
@@ -30,10 +35,10 @@ GameLoop({
 // })
 // onPointer('up', () => {
 //   if (!music) {
-//     @ts-ignore
+//     // @ts-ignore
 //     music = zzfxP(...zzfxM(...MUSIC))
 //     music.loop = true
-//     TODO: remove me
+//     // TODO: remove me
 //     a.click()
 //   }
 // })

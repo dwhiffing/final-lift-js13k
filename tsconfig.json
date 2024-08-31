@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
-    "paths": {
-      "~*": [
-        "./*"
-      ]
-    }
   },
   "lib": [
     "dom"
+  ],
+  "globals": [
+    "__pointerDown"
   ],
   "include": [
     "src/**/*"

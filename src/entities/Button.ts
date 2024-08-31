@@ -1,4 +1,4 @@
-import { Button as BaseButton, getCanvas } from 'kontra'
+import { Button as BaseButton, emit, getCanvas, getPointer } from 'kontra'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 
@@ -11,6 +11,7 @@ export const Button = (x, y, t = '0', size = 15) =>
     anchor: { x: 0.5, y: 0.5 },
     padX: 5,
     padY: 5,
+    disabled: true,
     text: {
       text: t,
       color: 'white',
@@ -18,6 +19,18 @@ export const Button = (x, y, t = '0', size = 15) =>
       width: 5,
       textAlign: 'center',
       anchor: { x: 0, y: 0.55 },
+    },
+    onUp() {
+      emit('press', this.text)
+    },
+    onOver() {
+      if (this.disabled) return
+      this.pressed = window.__pointerDown
+      this.hovered = true
+    },
+    onOut() {
+      this.pressed = false
+      this.hovered = false
     },
     collidesWithPointer: function (pointer) {
       const x = getCanvas().width / 2 + camera.x

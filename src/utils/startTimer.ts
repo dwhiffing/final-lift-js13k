@@ -1,4 +1,7 @@
-export function startTimer(duration, onProgress?) {
+import { TIME_SCALE } from '../utils'
+
+export function startTimer(_duration, onProgress?) {
+  const duration = _duration * TIME_SCALE
   const startTime = performance.now() // Get the start time
   let promise = new Promise((resolve) => {
     function update() {
