@@ -3,7 +3,7 @@ import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
 import { floatToHex } from './floatToHex'
-import { BASE_DURATION } from '../utils'
+import { BASE_DURATION, shuffle } from '../utils'
 
 export let camera = { zoom: 1, x: 0, y: 0 }
 
@@ -17,6 +17,7 @@ export const GameScene = ({ canvas }) => {
   const context = getContext()
 
   let floor = 1
+  let phase = 0
 
   const moveCamera = async (p: { zoom?: number; x?: number }) => {
     const z = camera.zoom
@@ -44,15 +45,22 @@ export const GameScene = ({ canvas }) => {
     }
   }
 
-  const setFloor = async (value: number) => {
-    floor = value
-    background.toggleButtons(false)
-    await togglePan(false)
-    background.toggleDoor(1)
+  const startFloor = async () => {
+    background.updateButtons([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     await moveCamera({ zoom: 1 })
-    await startTimer(1000)
+    await startTimer(5000)
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
+  }
+
+  const finishFloor = async (success: boolean) => {
+    // TODO: if success, gain time, if not lose time
+    background.toggleButtons(false)
+    await togglePan(false)
+    background.updateButtons(shuffle([1, 2, 3, -1, -2, -3]))
+    await background.toggleDoor(1)
+    await startTimer(BASE_DURATION / 2)
+    await togglePan(true)
   }
 
   const onStart = async () => {
@@ -63,22 +71,29 @@ export const GameScene = ({ canvas }) => {
   }
   onStart()
 
-  on('press', async (a) => {
-    // if correct button was press
-    if (a === '10') {
-      // TODO: gain time
-      await setFloor(2)
-      // TODO: change floor
-      // if incorrect button was press
+  on('press', async (buttonText) => {
+    background.toggleButtons(false)
+    if (phase === 0) {
+      phase = 1
+      if (buttonText === '10') {
+        await finishFloor(true)
+      } else {
+        await finishFloor(false)
+      }
     } else {
-      await setFloor(2)
-      // TODO: lose time
+      phase = 0
+      floor += Number(buttonText)
+      console.log(floor)
+      if (floor === 13) {
+        // TODO: gameover
+      }
+      await startFloor()
     }
   })
 
   onPointer('up', (e) => {
     window.__pointerDown = false
-    if (camera.zoom >= 2) {
+    if (phase === 0 && camera.zoom >= 2) {
       // @ts-ignore
       const o = e.offsetX / canvas.width
       if (camera.x === 0 && o > 0.3) {

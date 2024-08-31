@@ -111,7 +111,13 @@ export const Background = ({ canvas }) => {
       buttons.forEach((b) => {
         b.hovered = false
         b.pressed = false
-        b.disabled = !enabled
+        b.disabled = b.text ? !enabled : true
+      })
+    },
+    updateButtons(labels: (string | number)[]) {
+      buttons.forEach((b, i) => {
+        b.disabled = !b.disabled ? !labels[i] : true
+        b.text = labels[i] ? `${labels[i]}` : ''
       })
     },
     toggleDoor(position = 1, duration = BASE_DURATION) {
