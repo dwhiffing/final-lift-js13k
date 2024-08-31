@@ -107,8 +107,8 @@ export const Background = ({ canvas }) => {
         : 'initial'
     },
     resize,
-    toggleDoor(position = 1) {
-      return startTimer(1200, (progress) => {
+    toggleDoor(position = 1, duration = 1200) {
+      return startTimer(duration, (progress) => {
         doorPosition = clamp(0.1, 1, position === 0 ? 1 - progress : progress)
         resize()
       })
