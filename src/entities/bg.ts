@@ -1,4 +1,4 @@
-import { clamp, lerp } from 'kontra'
+import { clamp, lerp, Sprite } from 'kontra'
 import { BASE_DURATION } from '../utils'
 import { startTimer } from '../utils/startTimer'
 import { Button } from './Button'
@@ -30,10 +30,12 @@ export const Background = ({ canvas }) => {
     topPanel: new Path(['#55493E', '#76685A']),
     leftWall: new Path([...wallGradient].reverse()),
     rightWall: new Path([...wallGradient].reverse()),
+
+    screen: Sprite({ color: '#000' }),
   }
 
   const buttons = []
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 15; i++) {
     buttons.push(Button(0, 0, `${i + 1}`))
   }
 
@@ -87,26 +89,33 @@ export const Background = ({ canvas }) => {
     objs.rightWall.onResize(cw - o, h2 - w, o, h + w, 0, o3, 0, 0)
     objs.leftDoor.onResize(d4, h2 + o2 + 6, d2, d3 - 6)
     objs.rightDoor.onResize(d4a, h2 + o2 + 6, d2, d3 - 6)
+    const size = 15
+    const off = 2
+    const cols = 3
+    const t = size + off
+    const bw = size * cols + off * (cols - 1)
+
+    const x = cw - o - w + size / 2 + (w - bw) / 2
+    const y = h2 + h / 2 - (t * 2) / 2 + t / 2 + 1
+    objs.screen.x = x - size / 2
+    objs.screen.y = y - 60
+    objs.screen.width = bw
+    objs.screen.height = 30
+    objs.screen.color = '0x000'
     buttons.forEach((b, i) => {
-      const size = 15
-      const off = 2
-      const t = size + off
-      const c = Math.floor(buttons.length / 2)
-      const x = cw - o - w + w / 2 - size / 2 - off / 2
-      const y = h2 + h / 2 - (t * c) / 2 + t / 2 + 1
-      b.x = x + (i % 2) * t
-      b.y = y + t * Math.floor(i / 2)
+      b.x = x + (i % cols) * t
+      b.y = y + t * Math.floor(i / cols)
     })
   }
 
   return {
     buttons,
     doorPosition,
+    resize,
     render() {
       const allObjects = [...Object.values(objs), ...buttons]
       allObjects.forEach((o) => o.render())
     },
-    resize,
     toggleButtons(enabled = true) {
       buttons.forEach((b) => {
         b.hovered = false
@@ -127,6 +136,5 @@ export const Background = ({ canvas }) => {
       })
     },
     update() {},
-    shutdown() {},
   }
 }
