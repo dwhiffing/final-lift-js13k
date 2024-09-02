@@ -95,7 +95,8 @@ export const GameScene = ({ canvas }) => {
     window.__pointerDown = false
     if (phase === 0 && camera.zoom >= 2) {
       // @ts-ignore
-      const o = e.offsetX / canvas.width
+      const x = e.offsetX ?? e.changedTouches[0].clientX
+      const o = x / canvas.width
       if (camera.x === 0 && o > 0.3) {
         togglePan(true)
       } else if (camera.x === 200 && o < 0.3) {
