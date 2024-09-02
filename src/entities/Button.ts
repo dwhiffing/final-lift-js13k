@@ -54,9 +54,9 @@ export const Button = (x, y, t = '0', size = 15) =>
       const glow = createGlow(...color, glowSize)
       ctx.beginPath()
       ctx.arc(s / 2, s / 2, s / 2, 0, Math.PI * 2)
-      ctx.fillStyle = this.pressed ? '#666' : '#888'
+      ctx.fillStyle = this.disabled ? '#8885' : this.pressed ? '#666' : '#888'
       ctx.lineWidth = 2
-      ctx.strokeStyle = focus ? 'white' : '#aaa'
+      ctx.strokeStyle = this.disabled ? '#aaa5' : focus ? 'white' : '#aaa'
       ctx.closePath()
 
       ctx.save()
@@ -65,7 +65,9 @@ export const Button = (x, y, t = '0', size = 15) =>
       ctx.stroke()
       ctx.restore()
 
-      const o = (glowSize - s) / 2
-      ctx.drawImage(glow, -o, -o)
+      if (!this.disabled) {
+        const o = (glowSize - s) / 2
+        ctx.drawImage(glow, -o, -o)
+      }
     },
   })
