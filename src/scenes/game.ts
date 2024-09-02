@@ -3,7 +3,7 @@ import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
 import { floatToHex } from './floatToHex'
-import { BASE_DURATION, shuffle } from '../utils'
+import { BASE_DURATION, shuffle, START_TIME } from '../utils'
 
 export let camera = { zoom: 1, x: 0, y: 0 }
 
@@ -17,7 +17,9 @@ export const GameScene = ({ canvas }) => {
   const context = getContext()
 
   let floor = 1
+  // time-paused,solve-puzzle,choose-floor,gameover
   let phase = 0
+  let timer = START_TIME
 
   const moveCamera = async (p: { zoom?: number; x?: number }) => {
     const z = camera.zoom
@@ -35,6 +37,19 @@ export const GameScene = ({ canvas }) => {
     })
   }
 
+  const updateTimer = async () => {
+    if (phase === 1) {
+      timer--
+      background.timer.setText(`${timer}`)
+      if (timer === 0) {
+        return onGameover()
+      }
+    }
+    await startTimer(1000)
+    updateTimer()
+  }
+  updateTimer()
+
   const togglePan = async (active = true) => {
     if (active) {
       await moveCamera({ zoom: 3.5, x: 200 })
@@ -45,12 +60,17 @@ export const GameScene = ({ canvas }) => {
     }
   }
 
-  const startFloor = async () => {
-    background.updateButtons([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    await moveCamera({ zoom: 1 })
-    await startTimer(5000)
+  const startFloor = async (intro = false) => {
+    if (intro) {
+      await fade(1, 0.5)
+    } else {
+      background.updateButtons([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+      await moveCamera({ zoom: 1 })
+    }
+    await startTimer(intro ? 1000 : 5000)
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
+    phase = 1
   }
 
   const finishFloor = async (success: boolean) => {
@@ -63,18 +83,19 @@ export const GameScene = ({ canvas }) => {
     await togglePan(true)
   }
 
-  const onStart = async () => {
-    await fade(1, 0.5)
-    await startTimer(1000)
-    background.toggleDoor(0)
-    await moveCamera({ zoom: 2 })
+  startFloor(true)
+
+  const onGameover = async () => {
+    await fade(0.5, 1)
+    await moveCamera({ zoom: 1, x: 0 })
+    await background.toggleDoor(1)
+    phase = 3
   }
-  onStart()
 
   on('press', async (buttonText) => {
     background.toggleButtons(false)
-    if (phase === 0) {
-      phase = 1
+    if (phase === 1) {
+      phase = 2
       if (buttonText === '10') {
         await finishFloor(true)
       } else {
@@ -83,9 +104,8 @@ export const GameScene = ({ canvas }) => {
     } else {
       phase = 0
       floor += Number(buttonText)
-      console.log(floor)
       if (floor === 13) {
-        // TODO: gameover
+        return onGameover()
       }
       await startFloor()
     }
@@ -93,7 +113,13 @@ export const GameScene = ({ canvas }) => {
 
   onPointer('up', (e) => {
     window.__pointerDown = false
-    if (phase === 0 && camera.zoom >= 2) {
+    if (phase === 3) {
+      phase = 0
+      floor = 1
+      timer = START_TIME
+      startFloor(true)
+    }
+    if (phase === 1 && camera.zoom >= 2) {
       // @ts-ignore
       const x = e.offsetX ?? e.changedTouches[0].clientX
       const o = x / canvas.width

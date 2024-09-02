@@ -1,4 +1,4 @@
-import { Button as BaseButton, emit, getCanvas, getPointer } from 'kontra'
+import { Button as BaseButton, emit, getCanvas } from 'kontra'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 

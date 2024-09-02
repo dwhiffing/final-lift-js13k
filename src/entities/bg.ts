@@ -1,7 +1,8 @@
-import { clamp, lerp, Sprite } from 'kontra'
+import { clamp, lerp } from 'kontra'
 import { BASE_DURATION } from '../utils'
 import { startTimer } from '../utils/startTimer'
 import { Button } from './Button'
+import { Timer } from './Timer'
 import { Path } from './Path'
 
 const panelGradient = ['#766656', '#615546']
@@ -31,7 +32,7 @@ export const Background = ({ canvas }) => {
     leftWall: new Path([...wallGradient].reverse()),
     rightWall: new Path([...wallGradient].reverse()),
 
-    screen: Sprite({ color: '#000' }),
+    timer: Timer(),
   }
 
   const buttons = []
@@ -97,11 +98,8 @@ export const Background = ({ canvas }) => {
 
     const x = cw - o - w + size / 2 + (w - bw) / 2
     const y = h2 + h / 2 - (t * 2) / 2 + t / 2 + 1
-    objs.screen.x = x - size / 2
-    objs.screen.y = y - 60
-    objs.screen.width = bw
-    objs.screen.height = 30
-    objs.screen.color = '0x000'
+    objs.timer.onResize(x - size / 2, y - 60, bw, 30)
+
     buttons.forEach((b, i) => {
       b.x = x + (i % cols) * t
       b.y = y + t * Math.floor(i / cols)
@@ -111,6 +109,7 @@ export const Background = ({ canvas }) => {
   return {
     buttons,
     doorPosition,
+    timer: objs.timer,
     resize,
     render() {
       const allObjects = [...Object.values(objs), ...buttons]

@@ -1,0 +1,27 @@
+import { Sprite, Text } from 'kontra'
+export const Timer = () => {
+  const screen = Sprite({ color: '#000' })
+  const screenText = Text({
+    color: '#ff0000',
+    text: '99',
+    font: '20px Arial',
+    textAlign: 'center',
+  })
+  return {
+    onResize(x, y, width, height) {
+      screen.x = x
+      screen.y = y
+      screen.width = width
+      screen.height = height
+      screenText.x = x + width / 2
+      screenText.y = y - 9 + height / 2
+    },
+    setText(text) {
+      screenText.text = text
+    },
+    render() {
+      screen.render()
+      screenText.render()
+    },
+  }
+}
