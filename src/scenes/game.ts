@@ -3,9 +3,18 @@ import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
 import { floatToHex } from './floatToHex'
-import { BASE_DURATION, shuffle, START_TIME } from '../utils'
+import { BASE_DURATION, MUSIC_DISABLED, shuffle, START_TIME } from '../utils'
+import MUSIC from '../music'
 
 export let camera = { zoom: 1, x: 0, y: 0 }
+let music
+
+let a = document.getElementsByTagName('a')[0]
+a.addEventListener('click', (e) => {
+  music.playbackRate.value = a.innerHTML === 'mute' ? 0 : 1
+  a.innerHTML = a.innerHTML === 'mute' ? 'unmute' : 'mute'
+  window.zzfxV = window.zzfxV === 0 ? 0.3 : 0
+})
 
 export const GameScene = ({ canvas }) => {
   const background = Background({ canvas })
@@ -113,6 +122,14 @@ export const GameScene = ({ canvas }) => {
 
   onPointer('up', (e) => {
     window.__pointerDown = false
+
+    if (!music) {
+      // @ts-ignore
+      music = zzfxP(...zzfxM(...MUSIC))
+      music.loop = true
+      if (MUSIC_DISABLED) a.click()
+    }
+
     if (phase === 3) {
       phase = 0
       floor = 1
