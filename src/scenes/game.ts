@@ -12,7 +12,7 @@ import {
 } from '../utils'
 import MUSIC from '../music'
 
-export let camera = { zoom: 1, x: 0, y: 0 }
+export let camera = { zoom: 1.05, x: 0, y: 0, sx: 0, sy: 0, si: 0 }
 let music
 
 let a = document.getElementsByTagName('a')[0]
@@ -88,7 +88,7 @@ export const GameScene = ({ canvas }) => {
       await fade(1, 0.5)
     } else {
       background.updateButtons([])
-      await moveCamera({ zoom: 1 })
+      await moveCamera({ zoom: 1.05, x: 0 })
       await background.toggleDoor(1)
       background.puzzle.generateNewPuzzle()
     }
@@ -182,7 +182,12 @@ export const GameScene = ({ canvas }) => {
       context.save()
       const w = canvas.width / 2
       const h = canvas.height / 2
-      context.translate(w + camera.x, h + camera.y)
+      if (phase === -1 && ++camera.si % 5 === 0) {
+        camera.si = 0
+        camera.sx = (1 - Math.random() * 2) * 1.3
+        camera.sy = (1 - Math.random() * 2) * 1.3
+      }
+      context.translate(w + camera.x + camera.sx, h + camera.y + camera.sy)
       context.scale(camera.zoom, camera.zoom)
       context.translate(-(w + camera.x), -(h + camera.y))
 
