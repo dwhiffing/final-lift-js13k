@@ -28,9 +28,11 @@ export const Button = (x, y, t = '0', size = 15) =>
     onUp() {
       this.state = 1
       startTimer(BASE_DURATION / 3).then(() => {
-        emit('press', this.text)
         this.state = this.isCorrect ? 2 : 3
-        startTimer(BASE_DURATION * 2).then(() => (this.state = 0))
+        startTimer(BASE_DURATION * 2).then(() => {
+          emit('press', this.text)
+          this.state = 0
+        })
       })
     },
     onOver() {
