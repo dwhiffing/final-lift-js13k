@@ -2,6 +2,10 @@ export const BASE_DURATION = 600
 export const TIME_SCALE = 1
 export const MUSIC_DISABLED = true
 export const START_TIME = 60
+
+const maxFloor = 20
+const minFloor = 1
+
 // prettier-ignore
 const SOUNDS = {
   playerHit: [2,,1050,.01,.01,.02,3,1.06,-66,,,.15,,,,,.05,.82,.01,.03],
@@ -36,21 +40,6 @@ export const playSound = (key) => {
 
 export const toggleMute = () => (muted = !muted)
 
-// let focused = true
-// window.addEventListener('focus', () => (focused = true))
-// window.addEventListener('blur', () => (focused = false))
-// export const requestTimeout = (fn, delay) => {
-//   let _delay = delay / 10
-
-//   const loop = () => {
-//     if (focused) _delay -= 1
-//     if (_delay <= 0) return fn()
-//     requestAnimationFrame(loop)
-//   }
-
-//   requestAnimationFrame(loop)
-// }
-
 export function shuffle(array) {
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1))
@@ -73,4 +62,39 @@ export function lerpQuad(start, end, t) {
   const easedT = quadraticEaseInOut(t)
 
   return (1 - easedT) * start + easedT * end
+}
+
+export const getFloorButtons = (floor: number) => {
+  const count = 3
+
+  let numbers: number[] = []
+  const isValid = (n, i, a) =>
+    floor + n >= minFloor && floor + n <= maxFloor && a.indexOf(n) === i
+  while (numbers.length < count) {
+    numbers.push(getFloorButton(floor))
+    numbers = numbers.filter(isValid)
+  }
+  return shuffle(numbers.map((n) => `${n > 0 ? '+' : ''}${n}`))
+}
+
+const getFloorButton = (floor: number) => {
+  const deadly = 13 - floor
+  const options = [0, 1]
+  if (deadly <= 6) options.push(2)
+  const type = shuffle(options)[0]
+  const factor = floor > maxFloor - 9 ? 0 : floor < 9 ? 1 : 0.5
+  const negative = type !== 2 ? Math.random() >= factor : false
+  let number = 0
+  if (type === 0) {
+    // low
+    number = shuffle([1, 2, 3])[0]
+  } else if (type === 1) {
+    // high
+    number = shuffle([4, 5, 6, 7])[0]
+  } else if (type === 2) {
+    // deadly
+    number = deadly
+  }
+
+  return negative ? number * -1 : number
 }

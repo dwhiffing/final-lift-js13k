@@ -1,5 +1,20 @@
 import { TIME_SCALE } from '../utils'
 
+// let focused = true
+// window.addEventListener('focus', () => (focused = true))
+// window.addEventListener('blur', () => (focused = false))
+// export const requestTimeout = (fn, delay) => {
+//   let _delay = delay / 10
+
+//   const loop = () => {
+//     if (focused) _delay -= 1
+//     if (_delay <= 0) return fn()
+//     requestAnimationFrame(loop)
+//   }
+
+//   requestAnimationFrame(loop)
+// }
+
 export function startTimer(_duration, onProgress?) {
   const duration = _duration / TIME_SCALE
   const startTime = performance.now() // Get the start time

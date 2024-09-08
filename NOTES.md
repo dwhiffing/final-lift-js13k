@@ -1,15 +1,10 @@
-# make floor selection more variable
-
-when on lower floor, should be above 0
-when on higher floor, should be below 16
-
 # add scoring system
 
 gain 1 point per floor
-combo gives multiplier every 3 floors
 display score in between floors
 have difficulty increase as score goes up
 elevator options, should only have 2 options at first, goes up as score increases
+if score is lower, low level number is more likely, then high/deadly as it increases
 
 # need menu
 
@@ -23,6 +18,8 @@ button animations
 sequence: The player is given a sequence of numbers and must determine the next number in the sequence. sequence gets more complicated based on difficulty
 
 # need gameover animation: red eyes in the dark?
+
+combo gives multiplier every 3 floors
 
 # add music
 

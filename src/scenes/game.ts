@@ -5,9 +5,9 @@ import { startTimer } from '../utils/startTimer'
 import { floatToHex } from './floatToHex'
 import {
   BASE_DURATION,
+  getFloorButtons,
   lerpQuad,
   MUSIC_DISABLED,
-  shuffle,
   START_TIME,
 } from '../utils'
 import MUSIC from '../music'
@@ -113,7 +113,7 @@ export const GameScene = ({ canvas }) => {
   const finishFloor = async (success: boolean) => {
     setTimer(Math.min(99, timer + (success ? 5 : 0)))
 
-    background.updateButtons(shuffle(['+1', '+2', '+3', -1, -2, -3]))
+    background.updateButtons(getFloorButtons(floor))
     await togglePan(true)
   }
 
