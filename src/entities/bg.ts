@@ -73,8 +73,8 @@ export const Background = ({ canvas }) => {
 
     // door offset
     const _d4 = o + w + o2
-    const d4 = lerp(_d4 - d2, _d4, doorPosition)
-    const d4a = lerp(_d4 + d2 + d2, _d4 + d2, doorPosition)
+    const d4 = lerpQuad(_d4 - d2, _d4, doorPosition)
+    const d4a = lerpQuad(_d4 + d2 + d2, _d4 + d2, doorPosition)
 
     objs.ceiling.onResize(0, 0, cw, 106)
     objs.floor.onResize(0, ch / 2 + h3, cw, 120)

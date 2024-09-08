@@ -1,4 +1,4 @@
-export const BASE_DURATION = 500
+export const BASE_DURATION = 450
 export const TIME_SCALE = 1
 export const MUSIC_DISABLED = true
 export const START_TIME = 99
@@ -59,4 +59,18 @@ export function shuffle(array) {
     array[j] = temp
   }
   return array
+}
+
+function quadraticEaseInOut(t) {
+  if (t < 0.5) {
+    return 2 * t * t // Ease-in for the first half
+  } else {
+    return -2 * t * t + 4 * t - 1 // Ease-out for the second half
+  }
+}
+
+export function lerpQuad(start, end, t) {
+  const easedT = quadraticEaseInOut(t)
+
+  return (1 - easedT) * start + easedT * end
 }

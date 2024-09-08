@@ -1,9 +1,15 @@
-import { getContext, lerp, on, onPointer } from 'kontra'
+import { getContext, on, onPointer } from 'kontra'
 import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
 import { floatToHex } from './floatToHex'
-import { BASE_DURATION, MUSIC_DISABLED, shuffle, START_TIME } from '../utils'
+import {
+  BASE_DURATION,
+  lerpQuad,
+  MUSIC_DISABLED,
+  shuffle,
+  START_TIME,
+} from '../utils'
 import MUSIC from '../music'
 
 export let camera = { zoom: 1, x: 0, y: 0 }
@@ -30,29 +36,37 @@ export const GameScene = ({ canvas }) => {
   let phase = 0
   let timer = START_TIME
 
-  const moveCamera = async (p: { zoom?: number; x?: number }) => {
+  const moveCamera = async (p: {
+    zoom?: number
+    x?: number
+    duration?: number
+  }) => {
     const z = camera.zoom
     const x = camera.x
-    await startTimer(BASE_DURATION, (progress) => {
-      if (typeof p.zoom === 'number') camera.zoom = lerp(z, p.zoom, progress)
-      if (typeof p.x === 'number') camera.x = lerp(x, p.x, progress)
+    await startTimer(p.duration ?? BASE_DURATION, (progress) => {
+      if (typeof p.zoom === 'number')
+        camera.zoom = lerpQuad(z, p.zoom, progress)
+      if (typeof p.x === 'number') camera.x = lerpQuad(x, p.x, progress)
     })
     if (typeof p.x !== 'number') camera.x = 0
   }
 
   const fade = async (start = 0, end = 1) => {
     await startTimer(BASE_DURATION * 2, (progress) => {
-      shadow.colors = [`#000000${floatToHex(lerp(start, end, progress))}`]
+      shadow.colors = [`#000000${floatToHex(lerpQuad(start, end, progress))}`]
     })
   }
 
+  const setTimer = (value: number) => {
+    timer = value
+    background.timer.setText(`${timer}`)
+    if (timer === 0) {
+      return onGameover()
+    }
+  }
   const updateTimer = async () => {
     if (phase === 1) {
-      timer--
-      background.timer.setText(`${timer}`)
-      if (timer === 0) {
-        return onGameover()
-      }
+      setTimer(timer - 1)
     }
     await startTimer(1000)
     updateTimer()
@@ -61,11 +75,11 @@ export const GameScene = ({ canvas }) => {
 
   const togglePan = async (active = true) => {
     if (active) {
-      await moveCamera({ zoom: 3.5, x: 200 })
+      await moveCamera({ zoom: 3.5, x: 200, duration: BASE_DURATION / 2 })
       background.toggleButtons(true)
     } else {
       background.toggleButtons(false)
-      await moveCamera({ zoom: 2, x: 0 })
+      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION / 2 })
     }
   }
 
@@ -73,20 +87,20 @@ export const GameScene = ({ canvas }) => {
     if (intro) {
       await fade(1, 0.5)
     } else {
-      background.updateButtons([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
       await moveCamera({ zoom: 1 })
     }
-    await startTimer(intro ? 1000 : 5000)
+    await startTimer(intro ? 1000 : 3000)
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
     phase = 1
   }
 
   const finishFloor = async (success: boolean) => {
-    // TODO: if success, gain time, if not lose time
+    setTimer(timer + (success ? 5 : -5))
+
     background.toggleButtons(false)
     await togglePan(false)
-    background.updateButtons(shuffle([1, 2, 3, -1, -2, -3]))
+    background.updateButtons(shuffle(['+1', '+2', '+3', -1, -2, -3]))
     await background.toggleDoor(1)
     await startTimer(BASE_DURATION / 2)
     await togglePan(true)
@@ -102,6 +116,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   on('press', async (buttonText) => {
+    await startTimer(500)
     background.toggleButtons(false)
     if (phase === 1) {
       phase = 2
