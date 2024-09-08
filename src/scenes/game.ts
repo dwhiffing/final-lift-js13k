@@ -92,9 +92,18 @@ export const GameScene = ({ canvas }) => {
       await background.toggleDoor(1)
       background.puzzle.generateNewPuzzle()
     }
-    await startTimer(intro ? 1000 : 3000)
+    await startTimer(intro ? 500 : 250)
+    if (!intro) {
+      phase = -1
+      await startTimer(1500)
+      phase = 0
+      await startTimer(500)
+    }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
+    if (floor === 13) {
+      return onGameover()
+    }
     const p = background.puzzle
     const options = p.getOptions()
     background.updateButtons(options, background.puzzle.getCorrectAnswer())
@@ -126,11 +135,7 @@ export const GameScene = ({ canvas }) => {
         await finishFloor(false)
       }
     } else {
-      phase = 0
       floor += Number(buttonText)
-      if (floor === 13) {
-        return onGameover()
-      }
       await startFloor()
     }
   })
