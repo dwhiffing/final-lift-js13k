@@ -155,7 +155,7 @@ export const GameScene = ({ canvas }) => {
       // @ts-ignore
       const x = e.offsetX ?? e.changedTouches[0].clientX
       const o = x / canvas.width
-      if (camera.x === 0 && o > 0.3) {
+      if (camera.x === 0) {
         togglePan(true)
       } else if (camera.x === 200 && o < 0.3) {
         togglePan(false)
