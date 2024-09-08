@@ -95,7 +95,7 @@ export const GameScene = ({ canvas }) => {
     await startTimer(intro ? 500 : 250)
     if (!intro) {
       phase = -1
-      await startTimer(1500)
+      await startTimer(2500)
       phase = 0
       await startTimer(500)
     }
@@ -187,10 +187,10 @@ export const GameScene = ({ canvas }) => {
       context.save()
       const w = canvas.width / 2
       const h = canvas.height / 2
-      if (phase === -1 && ++camera.si % 5 === 0) {
+      if (phase === -1 && ++camera.si % 6 === 0) {
         camera.si = 0
-        camera.sx = (1 - Math.random() * 2) * 1.3
-        camera.sy = (1 - Math.random() * 2) * 1.3
+        camera.sx = (1 - Math.random() * 2) * 1
+        camera.sy = (1 - Math.random() * 2) * 1
       }
       context.translate(w + camera.x + camera.sx, h + camera.y + camera.sy)
       context.scale(camera.zoom, camera.zoom)

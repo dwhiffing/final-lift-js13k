@@ -2,15 +2,6 @@
 
 when on lower floor, should be above 0
 when on higher floor, should be below 16
-should only have 2 options at first, goes up as difficulty increases
-
-# need menu
-
-display score at end of game
-
-# add "sequence" puzzle (difficulty adds more options)
-
-sequence: The player is given a sequence of numbers and must determine the next number in the sequence. sequence gets more complicated based on difficulty
 
 # add scoring system
 
@@ -18,11 +9,18 @@ gain 1 point per floor
 combo gives multiplier every 3 floors
 display score in between floors
 have difficulty increase as score goes up
+elevator options, should only have 2 options at first, goes up as score increases
 
-# camera shake effect would be nice
+# need menu
 
-just translate context randomly over a set duration?
-rumble when elevator is moving + audio
+display score at end of game
+just fade light to dark
+light should flicker randomly
+button animations
+
+# add "sequence" puzzle (difficulty adds more options)
+
+sequence: The player is given a sequence of numbers and must determine the next number in the sequence. sequence gets more complicated based on difficulty
 
 # need gameover animation: red eyes in the dark?
 
@@ -32,6 +30,7 @@ creepy elevator music?
 
 # add sounds
 
+rumble when elevator is moving + audio
 button press in out sound
 correct/incorrect answer sound
 door close/open
