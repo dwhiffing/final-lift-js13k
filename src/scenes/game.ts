@@ -92,6 +92,9 @@ export const GameScene = ({ canvas }) => {
     await startTimer(intro ? 1000 : 3000)
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
+    const p = background.puzzle
+    const options = p.getOptions()
+    background.updateButtons(options, background.puzzle.getCorrectAnswer())
     phase = 1
   }
 
@@ -120,7 +123,7 @@ export const GameScene = ({ canvas }) => {
     background.toggleButtons(false)
     if (phase === 1) {
       phase = 2
-      if (buttonText === '10') {
+      if (buttonText === background.puzzle.getCorrectAnswer()) {
         await finishFloor(true)
       } else {
         await finishFloor(false)
@@ -131,6 +134,7 @@ export const GameScene = ({ canvas }) => {
       if (floor === 13) {
         return onGameover()
       }
+      background.puzzle.generateNewPuzzle()
       await startFloor()
     }
   })

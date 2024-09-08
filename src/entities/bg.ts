@@ -1,9 +1,10 @@
-import { clamp, lerp } from 'kontra'
-import { BASE_DURATION } from '../utils'
+import { clamp } from 'kontra'
+import { BASE_DURATION, lerpQuad } from '../utils'
 import { startTimer } from '../utils/startTimer'
 import { Button } from './Button'
 import { Timer } from './Timer'
 import { Path } from './Path'
+import { Puzzle } from './Puzzle'
 
 const panelGradient = ['#766656', '#615546']
 const doorGradient = ['#9B938B', '#6A5F54', '#584D3F']
@@ -18,6 +19,8 @@ export const Background = ({ canvas }) => {
     floor2: new Path(floorGradient),
     floor3: new Path(['#463D33', '#393127']),
     ceiling: new Path([...floorGradient].reverse()),
+
+    puzzle: Puzzle(),
 
     leftDoor: new Path(doorGradient),
     rightDoor: new Path(doorGradient),
@@ -110,6 +113,7 @@ export const Background = ({ canvas }) => {
     buttons,
     doorPosition,
     timer: objs.timer,
+    puzzle: objs.puzzle,
     resize,
     render() {
       const allObjects = [...Object.values(objs), ...buttons]
