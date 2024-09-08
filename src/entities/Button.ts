@@ -2,6 +2,7 @@ import { Button as BaseButton, emit, getCanvas } from 'kontra'
 import { startTimer } from '../utils/startTimer'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
+import { BASE_DURATION } from '../utils'
 
 export const Button = (x, y, t = '0', size = 15) =>
   BaseButton({
@@ -26,10 +27,10 @@ export const Button = (x, y, t = '0', size = 15) =>
     },
     onUp() {
       this.state = 1
-      startTimer(300).then(() => {
+      startTimer(BASE_DURATION / 3).then(() => {
         emit('press', this.text)
         this.state = this.isCorrect ? 2 : 3
-        startTimer(1000).then(() => (this.state = 0))
+        startTimer(BASE_DURATION * 2).then(() => (this.state = 0))
       })
     },
     onOver() {

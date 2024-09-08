@@ -75,11 +75,11 @@ export const GameScene = ({ canvas }) => {
 
   const togglePan = async (active = true) => {
     if (active) {
-      await moveCamera({ zoom: 3.5, x: 200, duration: BASE_DURATION / 2 })
+      await moveCamera({ zoom: 3.5, x: 200, duration: BASE_DURATION * 0.75 })
       background.toggleButtons(true)
     } else {
       background.toggleButtons(false)
-      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION / 2 })
+      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION * 0.75 })
     }
   }
 
@@ -101,11 +101,13 @@ export const GameScene = ({ canvas }) => {
   const finishFloor = async (success: boolean) => {
     setTimer(timer + (success ? 5 : -5))
 
+    await startTimer(BASE_DURATION)
     background.toggleButtons(false)
     await togglePan(false)
     background.updateButtons(shuffle(['+1', '+2', '+3', -1, -2, -3]))
+    await startTimer(BASE_DURATION)
     await background.toggleDoor(1)
-    await startTimer(BASE_DURATION / 2)
+    await startTimer(BASE_DURATION)
     await togglePan(true)
   }
 
@@ -119,7 +121,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   on('press', async (buttonText) => {
-    await startTimer(500)
+    await startTimer(BASE_DURATION)
     background.toggleButtons(false)
     if (phase === 1) {
       phase = 2
