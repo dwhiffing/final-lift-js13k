@@ -26,13 +26,12 @@ export const Button = (x, y, t = '0', size = 15) =>
       anchor: { x: 0, y: 0.55 },
     },
     onUp() {
+      if (this.state !== 0) return
       this.state = 1
-      startTimer(BASE_DURATION / 3).then(() => {
-        this.state = this.isCorrect ? 2 : 3
-        startTimer(BASE_DURATION * 2).then(() => {
-          emit('press', this.text)
-          this.state = 0
-        })
+      this.state = this.isCorrect ? 2 : 3
+      startTimer(BASE_DURATION).then(() => {
+        emit('press', this.text)
+        this.state = 0
       })
     },
     onOver() {
