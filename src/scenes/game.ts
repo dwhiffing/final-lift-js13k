@@ -65,7 +65,7 @@ export const GameScene = ({ canvas }) => {
     }
   }
   const updateTimer = async () => {
-    if (phase === 1 || phase === 2) {
+    if (phase === 1) {
       setTimer(timer - 1)
     }
     await startTimer(1000)
