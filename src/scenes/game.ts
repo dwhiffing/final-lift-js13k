@@ -65,7 +65,7 @@ export const GameScene = ({ canvas }) => {
     }
   }
   const updateTimer = async () => {
-    if (phase === 1) {
+    if (phase === 1 || phase === 2) {
       setTimer(timer - 1)
     }
     await startTimer(1000)
@@ -99,7 +99,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   const finishFloor = async (success: boolean) => {
-    setTimer(timer + (success ? 5 : -5))
+    setTimer(Math.min(99, timer + (success ? 5 : 0)))
 
     await startTimer(BASE_DURATION)
     background.toggleButtons(false)

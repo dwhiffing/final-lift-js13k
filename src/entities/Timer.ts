@@ -1,9 +1,10 @@
 import { Sprite, Text } from 'kontra'
+import { START_TIME } from '../utils'
 export const Timer = () => {
   const screen = Sprite({ color: '#000' })
   const screenText = Text({
     color: '#ff0000',
-    text: '99',
+    text: START_TIME.toString(),
     font: '20px Arial',
     textAlign: 'center',
   })

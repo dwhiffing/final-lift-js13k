@@ -1,7 +1,7 @@
 export const BASE_DURATION = 450
 export const TIME_SCALE = 1
 export const MUSIC_DISABLED = true
-export const START_TIME = 99
+export const START_TIME = 60
 // prettier-ignore
 const SOUNDS = {
   playerHit: [2,,1050,.01,.01,.02,3,1.06,-66,,,.15,,,,,.05,.82,.01,.03],
