@@ -1,4 +1,5 @@
 import { Button as BaseButton, emit, getCanvas } from 'kontra'
+import { startTimer } from '../utils/startTimer'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 
@@ -12,6 +13,9 @@ export const Button = (x, y, t = '0', size = 15) =>
     padX: 5,
     padY: 5,
     disabled: true,
+    isCorrect: false,
+    hasColorState: false,
+    state: 0,
     text: {
       text: t,
       color: 'white',
@@ -21,7 +25,12 @@ export const Button = (x, y, t = '0', size = 15) =>
       anchor: { x: 0, y: 0.55 },
     },
     onUp() {
-      emit('press', this.text)
+      this.state = 1
+      startTimer(300).then(() => {
+        emit('press', this.text)
+        this.state = this.isCorrect ? 2 : 3
+        startTimer(1000).then(() => (this.state = 0))
+      })
     },
     onOver() {
       if (this.disabled) return
@@ -47,16 +56,24 @@ export const Button = (x, y, t = '0', size = 15) =>
       const s = size
       const ctx = this.context
       const focus = this.focused || this.hovered
-      const glowSize = this.pressed ? s * 5 : focus ? s * 3 : s
-      const color: [number, number, number] = this.pressed
-        ? [0.6, 1, 0.6]
-        : [0.9, 0.9, 0.8]
+      const pressed = this.pressed || this.state === 1
+      const glowFactor =
+        this.state > 1 ? 5 : this.state === 1 ? 3 : focus ? 2 : 1
+      const glowSize = glowFactor * s
+
+      const color: [number, number, number] =
+        this.state < 2 || !this.hasColorState
+          ? [0.9, 0.9, 0.8]
+          : this.state === 2
+            ? [0.6, 1, 0.6]
+            : [1, 0.2, 0.2]
+
       const glow = createGlow(...color, glowSize)
       ctx.beginPath()
       ctx.arc(s / 2, s / 2, s / 2, 0, Math.PI * 2)
-      ctx.fillStyle = this.disabled ? '#8885' : this.pressed ? '#666' : '#888'
+      ctx.fillStyle = this.disabled ? '#8885' : pressed ? '#666' : '#888'
       ctx.lineWidth = 2
-      ctx.strokeStyle = this.disabled ? '#aaa5' : focus ? 'white' : '#aaa'
+      ctx.strokeStyle = this.disabled ? '#aaa5' : focus ? '#eee' : '#aaa'
       ctx.closePath()
 
       ctx.save()

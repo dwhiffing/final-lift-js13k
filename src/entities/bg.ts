@@ -126,10 +126,13 @@ export const Background = ({ canvas }) => {
         b.disabled = b.text ? !enabled : true
       })
     },
-    updateButtons(labels: (string | number)[]) {
+    updateButtons(labels: (string | number)[], correctAnswer?: string) {
       buttons.forEach((b, i) => {
         b.disabled = !b.disabled ? !labels[i] : true
         b.text = labels[i] ? `${labels[i]}` : ''
+        b.hasColorState = typeof correctAnswer === 'string'
+        b.isCorrect =
+          typeof correctAnswer === 'string' ? labels[i] === correctAnswer : true
       })
     },
     toggleDoor(position = 1, duration = BASE_DURATION) {
