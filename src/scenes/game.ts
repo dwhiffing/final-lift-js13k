@@ -1,4 +1,4 @@
-import { getContext, on, onPointer } from 'kontra'
+import { getContext, on, onPointer, Text } from 'kontra'
 import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
@@ -13,7 +13,13 @@ import {
 import MUSIC from '../music'
 
 export let camera = { zoom: 1.05, x: 0, y: 0, sx: 0, sy: 0, si: 0 }
+export const baseTextConfig = {
+  color: '#ffffff',
+  textAlign: 'center',
+  anchor: { x: 0, y: 0.5 },
+}
 let music
+const baseAlpha = 0.75
 
 let a = document.getElementsByTagName('a')[0]
 a.addEventListener('click', (e) => {
@@ -26,16 +32,30 @@ export const GameScene = ({ canvas }) => {
   const background = Background({ canvas })
   background.resize()
 
-  const shadow = new Path(['#00000000'])
+  const shadow = new Path(['#000000'])
   shadow.onResize(0, 0, canvas.width, canvas.height)
 
   const context = getContext()
+  const titleText = Text({
+    ...baseTextConfig,
+    text: 'Final\nLift',
+    font: '84px sans-serif',
+    x: canvas.width / 2,
+    y: canvas.height * 0.4,
+  })
+  const startText = Text({
+    ...baseTextConfig,
+    text: 'Press to start',
+    font: '32px sans-serif',
+    x: canvas.width / 2,
+    y: canvas.height * 0.85,
+  })
 
-  let floor = 1
+  let floor = 0
   // time-paused,solve-puzzle,choose-floor,gameover
-  let phase = 0
+  let phase = 3
   let score = 0
-  let timer = START_TIME
+  let timer = 0
 
   const moveCamera = async (p: {
     zoom?: number
@@ -52,8 +72,8 @@ export const GameScene = ({ canvas }) => {
     if (typeof p.x !== 'number') camera.x = 0
   }
 
-  const fade = async (start = 0, end = 1) => {
-    await startTimer(BASE_DURATION * 2, (progress) => {
+  const fade = async (start = 0, end = 1, duration = BASE_DURATION * 2) => {
+    await startTimer(duration, (progress) => {
       shadow.colors = [`#000000${floatToHex(lerpQuad(start, end, progress))}`]
     })
   }
@@ -61,13 +81,14 @@ export const GameScene = ({ canvas }) => {
   const setTimer = (value: number) => {
     timer = value
     background.timer.setText(`${timer}`)
-    if (timer === 0) {
-      return onGameover()
-    }
   }
   const updateTimer = async () => {
-    if (phase === 1) {
+    if (phase === 1 && timer > 0) {
       setTimer(timer - 1)
+      if (timer === 0) {
+        await fade(0.5, 1)
+        onGameover()
+      }
     }
     await startTimer(1000)
     updateTimer()
@@ -86,7 +107,9 @@ export const GameScene = ({ canvas }) => {
 
   const startFloor = async (intro = false) => {
     if (intro) {
-      await fade(1, 0.5)
+      background.shadow.colors = [`#00000000`]
+      await fade(baseAlpha, 0.5)
+      background.puzzle.generateNewPuzzle(1)
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
@@ -94,7 +117,7 @@ export const GameScene = ({ canvas }) => {
       await background.toggleDoor(1)
       await startTimer(500)
       background.timer.setText(`${score}`)
-      background.puzzle.generateNewPuzzle()
+      background.puzzle.generateNewPuzzle(1)
     }
     await startTimer(intro ? 500 : 250)
     if (!intro) {
@@ -102,6 +125,10 @@ export const GameScene = ({ canvas }) => {
       await startTimer(2500)
       phase = 0
       await startTimer(500)
+    }
+    if (floor === 13) {
+      background.puzzle.setText('')
+      background.shadow.colors = [`#000000ff`]
     }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
@@ -122,14 +149,24 @@ export const GameScene = ({ canvas }) => {
     await togglePan(true)
   }
 
-  startFloor(true)
-
   const onGameover = async () => {
-    await fade(0.5, 1)
-    await moveCamera({ zoom: 1, x: 0 })
-    await background.toggleDoor(1)
+    await fade(0, 1, 0)
+    await startTimer(1000)
+    await moveCamera({ zoom: 1.05, x: 0, duration: 0 })
+    await background.toggleDoor(1, 0)
+    await fade(1, baseAlpha)
+    startText.text = `Score: ${score}`
+    onFadeMenu(0, 1)
     phase = 3
   }
+
+  const onFadeMenu = async (start = 1, end = 0) =>
+    startTimer(1000, (progress: number) => {
+      startText.color =
+        titleText.color = `#ffffff${floatToHex(lerpQuad(start, end, progress))}`
+    })
+
+  fade(1, baseAlpha, 0)
 
   on('press', async (buttonText) => {
     if (phase === 1) {
@@ -158,7 +195,8 @@ export const GameScene = ({ canvas }) => {
     if (phase === 3) {
       phase = 0
       floor = 1
-      timer = START_TIME
+      setTimer(START_TIME)
+      onFadeMenu()
       startFloor(true)
     }
     if (phase === 1 && camera.zoom >= 2) {
@@ -203,6 +241,8 @@ export const GameScene = ({ canvas }) => {
 
       background.render()
       shadow.render()
+      titleText.render()
+      startText.render()
 
       context.restore()
     },

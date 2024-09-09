@@ -1,4 +1,5 @@
 import { getCanvas, Text } from 'kontra'
+import { baseTextConfig } from '../scenes/game'
 export const Puzzle = () => {
   const { width, height } = getCanvas()
 
@@ -67,25 +68,21 @@ export const Puzzle = () => {
   }
 
   const text = Text({
-    color: '#ffffff',
+    ...baseTextConfig,
     text: '',
     font: '28px Arial',
     x: width / 2,
     y: height / 2,
     width: 190,
     height: 200,
-    textAlign: 'center',
-    anchor: { x: 0, y: 0.5 },
   })
-
-  generateNewPuzzle(1)
 
   return {
     generateNewPuzzle,
     getCorrectAnswer: () => correctAnswer,
     getOptions: () => options,
-    setText(text) {
-      text.text = text
+    setText(_text) {
+      text.text = _text
     },
     render() {
       text.render()

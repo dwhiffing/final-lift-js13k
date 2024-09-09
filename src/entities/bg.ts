@@ -16,6 +16,7 @@ export const Background = ({ canvas }) => {
   let doorPosition = 1
   const objs = {
     floor: new Path(['#444', '#555']),
+    shadow: new Path(['#00000000']),
     floor2: new Path(floorGradient),
     floor3: new Path(['#463D33', '#393127']),
     ceiling: new Path([...floorGradient].reverse()),
@@ -71,17 +72,17 @@ export const Background = ({ canvas }) => {
     // wall chamfer
     const o3 = o / 1.5
     // hall height
-    const h3 = 40
-    // floor height
 
     // door offset
     const _d4 = o + w + o2
     const d4 = lerpQuad(_d4 - d2, _d4, doorPosition)
     const d4a = lerpQuad(_d4 + d2 + d2, _d4 + d2, doorPosition)
 
+    objs.shadow.onResize(0, 0, canvas.width, canvas.height)
+
     objs.ceiling.onResize(0, 0, cw, 106)
-    objs.floor.onResize(0, ch / 2 + h3, cw, 120)
-    objs.floor2.onResize(0, 510, cw, 240)
+    objs.floor.onResize(0, ch / 2 + 100, cw, 120)
+    objs.floor2.onResize(0, 560, cw, 240)
     objs.floor3.onResize(cw / 2 - 300, 600, 600, 110, 140, 0, 0)
     objs.leftPanel.onResize(o, h2, w, h)
     objs.leftPanel2.onResize(o + w, h2, o2, h, 0, o4, 0, 0)
@@ -113,6 +114,7 @@ export const Background = ({ canvas }) => {
     buttons,
     doorPosition,
     timer: objs.timer,
+    shadow: objs.shadow,
     puzzle: objs.puzzle,
     resize,
     render() {
