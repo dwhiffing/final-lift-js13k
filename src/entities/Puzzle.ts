@@ -1,4 +1,5 @@
 import { getCanvas, Text } from 'kontra'
+import { shuffle } from '../utils'
 import { baseTextConfig } from '../scenes/game'
 
 export const Puzzle = () => {
@@ -9,11 +10,16 @@ export const Puzzle = () => {
   const setText = (s = '') => {
     text.text = s
   }
-  const generateNewPuzzle = (difficulty = 1) => {
-    let puzzle =
-      Math.random() > 0.5
-        ? generateEquationPuzzle(difficulty)
-        : generateSequencePuzzle(difficulty)
+  const generateNewPuzzle = (difficulty = 1, floor = 1) => {
+    const generator = shuffle([
+      generateEquationPuzzle,
+      generateFloorPuzzle,
+      generateSequencePuzzle,
+    ])[0]
+    let puzzle = generator(difficulty, floor)
+    Math.random() > 0.5
+      ? generateEquationPuzzle(difficulty)
+      : generateSequencePuzzle(difficulty)
     options = puzzle.options
     correctAnswer = puzzle.correctAnswer
     setText(puzzle.text)
@@ -66,6 +72,21 @@ const generateSequencePuzzle = (difficulty = 1) => {
     text: sequence.concat('_').join(', '),
     options: options.sort(() => Math.random() - 0.5).map(String),
     correctAnswer: `${correctAnswer}`,
+  }
+}
+const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
+  const range = Math.max(2, difficulty * 3)
+  const possibleFloors = Array.from(
+    { length: range * 2 + 1 },
+    (_, i) => floor - range + i,
+  ).filter((f) => f !== floor)
+
+  const options = shuffle([floor, ...shuffle(possibleFloors).slice(0, 4)])
+
+  return {
+    text: 'What floor are you on?',
+    options: options.map(String),
+    correctAnswer: `${floor}`,
   }
 }
 const generateEquationPuzzle = (difficulty = 1) => {

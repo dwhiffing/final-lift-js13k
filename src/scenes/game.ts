@@ -109,7 +109,7 @@ export const GameScene = ({ canvas }) => {
     if (intro) {
       background.shadow.colors = [`#00000000`]
       await fade(baseAlpha, 0.5)
-      background.puzzle.generateNewPuzzle(1)
+      background.puzzle.generateNewPuzzle(1, floor)
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
@@ -117,7 +117,7 @@ export const GameScene = ({ canvas }) => {
       await background.toggleDoor(1)
       await startTimer(500)
       background.timer.setText(`${score}`)
-      background.puzzle.generateNewPuzzle(1)
+      background.puzzle.generateNewPuzzle(1, floor)
     }
     await startTimer(intro ? 500 : 250)
     if (!intro) {
@@ -151,8 +151,10 @@ export const GameScene = ({ canvas }) => {
 
   const onGameover = async () => {
     await fade(0, 1, 0)
+    background.updateButtons([])
     await startTimer(1000)
     await moveCamera({ zoom: 1.05, x: 0, duration: 0 })
+
     await background.toggleDoor(1, 0)
     await fade(1, baseAlpha)
     startText.text = `Score: ${score}`

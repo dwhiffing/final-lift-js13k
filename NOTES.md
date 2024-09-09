@@ -13,8 +13,6 @@ door close/open
 sound when swapping perspective
 game over sounds
 
-# add "what floor are you on?" puzzle (difficulty adds more options)
-
 # ratios: The player must solve problems involving ratios and propor
 
 such as "If 2 apples cost 5 coins, how many coins for 7 apples?"
