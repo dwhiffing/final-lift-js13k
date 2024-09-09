@@ -1,8 +1,96 @@
 diff --git a/node_modules/kontra/kontra.mjs b/node_modules/kontra/kontra.mjs
-index fc1d632..6176c2a 100644
+index fc1d632..6dc2eb2 100644
 --- a/node_modules/kontra/kontra.mjs
 +++ b/node_modules/kontra/kontra.mjs
-@@ -2827,7 +2827,9 @@ class Text extends GameObject {
+@@ -295,13 +295,13 @@ function collides(obj1, obj2) {
+  * @returns {{x: Number, y: Number, width: Number, height: Number}} The world `x`, `y`, `width`, and `height` of the object.
+  */
+ function getWorldRect(obj) {
+-  let { x = 0, y = 0, width, height, radius } = obj.world || obj;
++  let { x, y, width, height } = obj;
+ 
+   // take into account tileEngine
+-  if (obj.mapwidth) {
+-    width = obj.mapwidth;
+-    height = obj.mapheight;
+-  }
++  // if (obj.mapwidth) {
++  //   width = obj.mapwidth;
++  //   height = obj.mapheight;
++  // }
+ 
+   // @ifdef GAMEOBJECT_RADIUS
+   // account for circle
+@@ -411,13 +411,17 @@ function removeFromArray(array, item) {
+  * @returns {Boolean} True if objects collide.
+  */
+ function circleRectCollision(circle, rect) {
+-  let { x, y, width, height } = getWorldRect(rect);
++  let { x, y, width, height } = rect
++  if (rect.anchor) {
++    x -= width * rect.anchor.x;
++    y -= height * rect.anchor.y;
++  }
+ 
+   // account for camera
+-  do {
+-    x -= rect.sx || 0;
+-    y -= rect.sy || 0;
+-  } while ((rect = rect.parent));
++  // do {
++  //   x -= rect.sx || 0;
++  //   y -= rect.sy || 0;
++  // } while ((rect = rect.parent));
+ 
+   let dx = circle.x - Math.max(x, Math.min(circle.x, x + width));
+   let dy = circle.y - Math.max(y, Math.min(circle.y, y + height));
+@@ -2359,7 +2363,7 @@ class GameObject extends Updatable {
+ 
+   // @ifdef GAMEOBJECT_GROUP
+   set children(value) {
+-    this.removeChild(this._c);
++    // this.removeChild(this._c);
+     this.addChild(value);
+   }
+ 
+@@ -2419,21 +2423,21 @@ class GameObject extends Updatable {
+     });
+   }
+ 
+-  /**
+-   * Remove an object as a child of this object. The removed objects [world](api/gameObject#world) property will be updated to not take into account this object and all of its parents.
+-   * @memberof GameObject
+-   * @function removeChild
+-   *
+-   * @param {...(GameObject|GameObject[])[]} objects - Object to remove as a child. Can be a single object, an array of objects, or a comma-separated list of objects.
+-   */
+-  removeChild(...objects) {
+-    objects.flat().map(child => {
+-      if (removeFromArray(this.children, child)) {
+-        child.parent = null;
+-        child._pc();
+-      }
+-    });
+-  }
++  // /**
++  //  * Remove an object as a child of this object. The removed objects [world](api/gameObject#world) property will be updated to not take into account this object and all of its parents.
++  //  * @memberof GameObject
++  //  * @function removeChild
++  //  *
++  //  * @param {...(GameObject|GameObject[])[]} objects - Object to remove as a child. Can be a single object, an array of objects, or a comma-separated list of objects.
++  //  */
++  // removeChild(...objects) {
++  //   objects.flat().map(child => {
++  //     if (removeFromArray(this.children, child)) {
++  //       child.parent = null;
++  //       child._pc();
++  //     }
++  //   });
++  // }
+   // @endif
+ 
+   // --------------------------------------------------
+@@ -2827,7 +2831,9 @@ class Text extends GameObject {
       * @memberof Text
       * @property {String} textAlign
       */
@@ -13,7 +101,7 @@ index fc1d632..6176c2a 100644
  
      /**
       * The distance between two lines of text. The value is multiplied by the texts font size.
-@@ -2858,7 +2860,7 @@ class Text extends GameObject {
+@@ -2858,7 +2864,7 @@ class Text extends GameObject {
        text,
        textAlign,
        lineHeight,
@@ -21,4 +109,417 @@ index fc1d632..6176c2a 100644
 +      font,color,anchor,
        ...props
      });
+ 
+@@ -3110,7 +3116,7 @@ function factory$7() {
+ // objects would block it later in the render order
+ let pointers = new WeakMap();
+ let callbacks$1 = {};
+-let pressedButtons = {};
++let pressedButtons = false
+ 
+ /**
+  * A map of pointer button indices to button names. Modify this object to expand the list of [available buttons](api/pointer#available-buttons).
+@@ -3197,51 +3203,10 @@ function getCanvasOffset(pointer) {
+   // we need to account for CSS scale, transform, border, padding,
+   // and margin in order to get the correct scale and offset of the
+   // canvas
+-  let { canvas, _s } = pointer;
++  let { canvas } = pointer;
+   let rect = canvas.getBoundingClientRect();
+ 
+-  // @see https://stackoverflow.com/a/53405390/2124254
+-  let transform =
+-    _s.transform != 'none'
+-      ? _s.transform.replace('matrix(', '').split(',')
+-      : [1, 1, 1, 1];
+-  let transformScaleX = parseFloat(transform[0]);
+-  let transformScaleY = parseFloat(transform[3]);
+-
+-  // scale transform applies to the border and padding of the element
+-  let borderWidth =
+-    (getPropValue(_s, 'border-left-width') +
+-      getPropValue(_s, 'border-right-width')) *
+-    transformScaleX;
+-  let borderHeight =
+-    (getPropValue(_s, 'border-top-width') +
+-      getPropValue(_s, 'border-bottom-width')) *
+-    transformScaleY;
+-
+-  let paddingWidth =
+-    (getPropValue(_s, 'padding-left') +
+-      getPropValue(_s, 'padding-right')) *
+-    transformScaleX;
+-  let paddingHeight =
+-    (getPropValue(_s, 'padding-top') +
+-      getPropValue(_s, 'padding-bottom')) *
+-    transformScaleY;
+-
+-  return {
+-    scaleX: (rect.width - borderWidth - paddingWidth) / canvas.width,
+-    scaleY:
+-      (rect.height - borderHeight - paddingHeight) / canvas.height,
+-    offsetX:
+-      rect.left +
+-      (getPropValue(_s, 'border-left-width') +
+-        getPropValue(_s, 'padding-left')) *
+-        transformScaleX,
+-    offsetY:
+-      rect.top +
+-      (getPropValue(_s, 'border-top-width') +
+-        getPropValue(_s, 'padding-top')) *
+-        transformScaleY
+-  };
++  return { scaleX: 1, scaleY: 1, offsetX: rect.left, offsetY: rect.top };
+ }
+ 
+ /**
+@@ -3251,8 +3216,8 @@ function getCanvasOffset(pointer) {
+  */
+ function pointerDownHandler(evt) {
+   // touchstart should be treated like a left mouse button
+-  let button = evt.button != null ? pointerMap[evt.button] : 'left';
+-  pressedButtons[button] = true;
++  // let button = evt.button != null ? pointerMap[evt.button] : 'left';
++  pressedButtons = true;
+   pointerHandler(evt, 'onDown');
+ }
+ 
+@@ -3262,8 +3227,8 @@ function pointerDownHandler(evt) {
+  * @param {MouseEvent|TouchEvent} evt
+  */
+ function pointerUpHandler(evt) {
+-  let button = evt.button != null ? pointerMap[evt.button] : 'left';
+-  pressedButtons[button] = false;
++  // let button = evt.button != null ? pointerMap[evt.button] : 'left';
++  pressedButtons = false;
+   pointerHandler(evt, 'onUp');
+ }
+ 
+@@ -3326,7 +3291,12 @@ function pointerHandler(evt, eventName) {
+ 
+   let canvas = evt.target;
+   let pointer = pointers.get(canvas);
+-  let { scaleX, scaleY, offsetX, offsetY } = getCanvasOffset(pointer);
++  // let { scaleX, scaleY, offsetX, offsetY } = getCanvasOffset(pointer);
++  let rect =canvas.getBoundingClientRect()
++  let scaleX= 1, scaleY= 1, offsetX= rect.left, offsetY= rect.top
++
++
++  // let scaleX =1, scaleY =1, offsetX=0, offsetY=0
+   let isTouchEvent = evt.type.includes('touch');
+ 
+   if (isTouchEvent) {
+@@ -3652,7 +3622,7 @@ function offPointer(direction) {
+  * @returns {Boolean} `true` if the button is pressed, `false` otherwise.
+  */
+ function pointerPressed(button) {
+-  return !!pressedButtons[button];
++  return !!pressedButtons;
+ }
+ 
+ /**
+@@ -3718,10 +3688,10 @@ class Button extends Sprite {
+ 
+     // if the user didn't set a width/height or use an image
+     // default to the textNode dimensions
+-    if (!this.width) {
+-      this.width = this.textNode.width;
+-      this.height = this.textNode.height;
+-    }
++    // if (!this.width) {
++    //   this.width = this.textNode.width;
++    //   this.height = this.textNode.height;
++    // }
+ 
+     track(this);
+     this.addChild(this.textNode);
+@@ -3734,21 +3704,21 @@ class Button extends Sprite {
+ 
+     // create an accessible DOM node for screen readers
+     // dn = dom node
+-    let button = (this._dn = document.createElement('button'));
+-    button.style = srOnlyStyle;
+-    button.textContent = this.text;
++    // let button = (this._dn = document.createElement('button'));
++    // button.style = srOnlyStyle;
++    // button.textContent = this.text;
+ 
+     if (disabled) {
+       this.disable();
+     }
+ 
+     // sync events between the button element and the class
+-    button.addEventListener('focus', () => this.focus());
+-    button.addEventListener('blur', () => this.blur());
+-    button.addEventListener('keydown', evt => this._kd(evt));
+-    button.addEventListener('keyup', evt => this._ku(evt));
++    // button.addEventListener('focus', () => this.focus());
++    // button.addEventListener('blur', () => this.blur());
++    // button.addEventListener('keydown', evt => this._kd(evt));
++    // button.addEventListener('keyup', evt => this._ku(evt));
+ 
+-    addToDom(button, container ?? this.context.canvas);
++    // addToDom(button, container ?? this.context.canvas);
+ 
+     this._uw();
+     this._p();
+@@ -3769,30 +3739,13 @@ class Button extends Sprite {
+     this.textNode.text = value;
+   }
+ 
+-  /**
+-   * The HTML button element associated with the button (used for accessibility). Typically you won't need to interact with the `node` directly, but it can be useful to move its position in the DOM to better support accessible component design.
+-   * @memberof Button
+-   * @property {HTMLButtonElement} node
+-   */
+-  get node() {
+-    return this._dn;
+-  }
+   // do not allow setting the node value by not having a setter
+ 
+-  /**
+-   * Clean up the button by removing the HTMLButtonElement from the DOM.
+-   * @memberof Button
+-   * @function destroy
+-   */
+-  destroy() {
+-    this._dn.remove();
+-  }
+-
+   _p() {
+     // update DOM node text if it has changed
+-    if (this.text != this._dn.textContent) {
+-      this._dn.textContent = this.text;
+-    }
++    // if (this.text != this._dn.textContent) {
++    //   this._dn.textContent = this.text;
++    // }
+ 
+     // update width and height (need to prerender the button
+     // first)
+@@ -3825,8 +3778,8 @@ class Button extends Sprite {
+      * @memberof Button
+      * @property {Boolean} disabled
+      */
+-    this.disabled = this._dn.disabled = false;
+-    this.onEnable();
++    this.disabled = false;
++    // this.onEnable();
+   }
+ 
+   /**
+@@ -3835,8 +3788,8 @@ class Button extends Sprite {
+    * @function disable
+    */
+   disable() {
+-    this.disabled = this._dn.disabled = true;
+-    this.onDisable();
++    this.disabled = true;
++    // this.onDisable();
+   }
+ 
+   /**
+@@ -3844,34 +3797,34 @@ class Button extends Sprite {
+    * @memberof Button
+    * @function focus
+    */
+-  focus() {
+-    if (!this.disabled) {
+-      /**
+-       * If the button is focused.
+-       * @memberof Button
+-       * @property {Boolean} focused
+-       */
+-      this.focused = true;
+-      // prevent infinite loop
+-      if (document.activeElement != this._dn)
+-        this._dn.focus(focusParams);
+-
+-      this.onFocus();
+-    }
+-  }
++  // focus() {
++  //   if (!this.disabled) {
++  //     /**
++  //      * If the button is focused.
++  //      * @memberof Button
++  //      * @property {Boolean} focused
++  //      */
++  //     this.focused = true;
++  //     // prevent infinite loop
++  //     // if (document.activeElement != this._dn)
++  //     //   this._dn.focus(focusParams);
++
++  //     this.onFocus();
++  //   }
++  // }
+ 
+   /**
+    * Blur the button. Calls [onBlur](api/button#onBlur) if passed.
+    * @memberof Button
+    * @function blur
+    */
+-  blur() {
+-    this.focused = false;
+-    // prevent infinite loop
+-    if (document.activeElement == this._dn) this._dn.blur();
++  // blur() {
++  //   this.focused = false;
++  //   // prevent infinite loop
++  //   // if (document.activeElement == this._dn) this._dn.blur();
+ 
+-    this.onBlur();
+-  }
++  //   this.onBlur();
++  // }
+ 
+   onOver() {
+     if (!this.disabled) {
+@@ -3888,33 +3841,33 @@ class Button extends Sprite {
+     this.hovered = false;
+   }
+ 
+-  /**
+-   * Function called when then button is enabled. Override this function to have the button do something when enabled.
+-   * @memberof Button
+-   * @function onEnable
+-   */
+-  onEnable() {}
+-
+-  /**
+-   * Function called when then button is disabled. Override this function to have the button do something when disabled.
+-   * @memberof Button
+-   * @function onDisable
+-   */
+-  onDisable() {}
+-
+-  /**
+-   * Function called when then button is focused. Override this function to have the button do something when focused.
+-   * @memberof Button
+-   * @function onFocus
+-   */
+-  onFocus() {}
+-
+-  /**
+-   * Function called when then button is blurred. Override this function to have the button do something when blurred.
+-   * @memberof Button
+-   * @function onBlur
+-   */
+-  onBlur() {}
++  // /**
++  //  * Function called when then button is enabled. Override this function to have the button do something when enabled.
++  //  * @memberof Button
++  //  * @function onEnable
++  //  */
++  // onEnable() {}
++
++  // /**
++  //  * Function called when then button is disabled. Override this function to have the button do something when disabled.
++  //  * @memberof Button
++  //  * @function onDisable
++  //  */
++  // onDisable() {}
++
++  // /**
++  //  * Function called when then button is focused. Override this function to have the button do something when focused.
++  //  * @memberof Button
++  //  * @function onFocus
++  //  */
++  // onFocus() {}
++
++  // /**
++  //  * Function called when then button is blurred. Override this function to have the button do something when blurred.
++  //  * @memberof Button
++  //  * @function onBlur
++  //  */
++  // onBlur() {}
+ 
+   onDown() {
+     if (!this.disabled) {
+@@ -3935,21 +3888,21 @@ class Button extends Sprite {
+     }
+   }
+ 
+-  // kd = keydown
+-  _kd(evt) {
+-    // activate button on enter or space
+-    if (evt.code == 'Enter' || evt.code == 'Space') {
+-      this.onDown();
+-    }
+-  }
+-
+-  // kd = keydown
+-  _ku(evt) {
+-    // activate button on enter or space
+-    if (evt.code == 'Enter' || evt.code == 'Space') {
+-      this.onUp();
+-    }
+-  }
++  // // kd = keydown
++  // _kd(evt) {
++  //   // activate button on enter or space
++  //   if (evt.code == 'Enter' || evt.code == 'Space') {
++  //     this.onDown();
++  //   }
++  // }
++
++  // // kd = keydown
++  // _ku(evt) {
++  //   // activate button on enter or space
++  //   if (evt.code == 'Enter' || evt.code == 'Space') {
++  //     this.onUp();
++  //   }
++  // }
+ }
+ 
+ function factory$6() {
+@@ -6455,7 +6408,7 @@ class Scene {
+       // move all objects to be in the scenes DOM node so we can
+       // hide and show the DOM node and thus hide and show all the
+       // objects
+-      this._dn.append(...getAllNodes(object));
++      // this._dn.append(...getAllNodes(object));
+     });
+   }
+ 
+@@ -6488,15 +6441,15 @@ class Scene {
+      * @memberof Scene
+      * @property {Boolean} hidden
+      */
+-    this.hidden = this._dn.hidden = false;
++    this.hidden =  false;
+ 
+     // find first focusable object
+-    let focusableObject = this._o.find(object => object.focus);
+-    if (focusableObject) {
+-      focusableObject.focus(focusParams);
+-    } else {
+-      this._dn.focus(focusParams);
+-    }
++    // let focusableObject = this._o.find(object => object.focus);
++    // if (focusableObject) {
++    //   focusableObject.focus(focusParams);
++    // } else {
++    //   this._dn.focus(focusParams);
++    // }
+ 
+     this.onShow();
+   }
+@@ -6507,7 +6460,7 @@ class Scene {
+    * @function hide
+    */
+   hide() {
+-    this.hidden = this._dn.hidden = true;
++    this.hidden = true;
+     this.onHide();
+   }
+ 
+@@ -6518,7 +6471,7 @@ class Scene {
+    */
+   destroy() {
+     off('init', this._i);
+-    this._dn.remove();
++    // this._dn.remove();
+     this._o.map(object => object.destroy && object.destroy());
+   }
  

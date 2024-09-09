@@ -2,7 +2,7 @@ import { getContext, on, onPointer, Text } from 'kontra'
 import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
 import { startTimer } from '../utils/startTimer'
-import { floatToHex } from './floatToHex'
+import { floatToHex } from '../utils/floatToHex'
 import {
   BASE_DURATION,
   getFloorButtons,

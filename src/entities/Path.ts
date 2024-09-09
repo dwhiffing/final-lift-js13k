@@ -5,10 +5,6 @@ export class Path extends SpriteClass {
     super({ x: 0, y: 0, width: 0, height: 0, anchor: { x: 0, y: 0 } })
     this.colors = colors
     this.horizontal = horizontal
-    this.chamferL = 0
-    this.chamferR = 0
-    this.chamferT = 0
-    this.chamferB = 0
   }
 
   onResize(
