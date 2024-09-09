@@ -22,7 +22,6 @@ export const Button = (x, y, t = '0', size = 15) =>
       color: 'white',
       font: '7px Arial, sans-serif',
       width: 5,
-      textAlign: 'center',
       anchor: { x: 0, y: 0.55 },
     },
     onUp() {

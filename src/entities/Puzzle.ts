@@ -1,6 +1,5 @@
 import { getCanvas, Text } from 'kontra'
 import { shuffle, randInt } from '../utils'
-import { baseTextConfig } from '../scenes/game'
 
 export const Puzzle = () => {
   const { width, height } = getCanvas()
@@ -33,7 +32,6 @@ export const Puzzle = () => {
   }
 
   const text = Text({
-    ...baseTextConfig,
     text: '',
     font: '28px Arial',
     x: width / 2,
@@ -88,7 +86,6 @@ const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
           color: '#fff',
           text: emoji,
           font: '24px Arial',
-          textAlign: 'center',
           x:
             centerX +
             Math.random() * radius * Math.cos(Math.random() * a + currentAngle),

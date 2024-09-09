@@ -6,7 +6,6 @@ import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 import kontra from 'rollup-plugin-kontra'
 import { terser } from 'rollup-plugin-terser'
-import cleanup from "rollup-plugin-cleanup";
 
 const prod = process.env.NODE_ENV === 'production'
 
@@ -24,7 +23,6 @@ export default {
       text: { textAlign: true, newline: true, autoNewline: true, rtl: false, stroke: false },
       vector: false,
     }),
-    // cleanup({ comments: "some", }),
     commonjs(),
     resolve(),
     esbuild({

@@ -6,7 +6,6 @@ export const Timer = () => {
     color: '#ff0000',
     text: START_TIME.toString(),
     font: '12px Arial',
-    textAlign: 'center',
   })
   return {
     onResize(x, y, width, height) {
@@ -15,7 +14,7 @@ export const Timer = () => {
       screen.width = width
       screen.height = height
       screenText.x = x + width / 2
-      screenText.y = y - 5 + height / 2
+      screenText.y = y + height / 2
     },
     setText(text) {
       screenText.text = text

@@ -1,0 +1,24 @@
+diff --git a/node_modules/kontra/kontra.mjs b/node_modules/kontra/kontra.mjs
+index fc1d632..6176c2a 100644
+--- a/node_modules/kontra/kontra.mjs
++++ b/node_modules/kontra/kontra.mjs
+@@ -2827,7 +2827,9 @@ class Text extends GameObject {
+      * @memberof Text
+      * @property {String} textAlign
+      */
+-    textAlign = '',
++    textAlign = 'center',
++    anchor = { x: 0, y: 0.5 },
++    color = '#fff',
+ 
+     /**
+      * The distance between two lines of text. The value is multiplied by the texts font size.
+@@ -2858,7 +2860,7 @@ class Text extends GameObject {
+       text,
+       textAlign,
+       lineHeight,
+-      font,
++      font,color,anchor,
+       ...props
+     });
+ 

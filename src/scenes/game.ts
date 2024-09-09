@@ -13,11 +13,7 @@ import {
 import MUSIC from '../music'
 
 export let camera = { zoom: 1.05, x: 0, y: 0, sx: 0, sy: 0, si: 0 }
-export const baseTextConfig = {
-  color: '#fff',
-  textAlign: 'center',
-  anchor: { x: 0, y: 0.5 },
-}
+
 let music,
   a = document.getElementsByTagName('a')[0],
   baseAlpha = 0.75
@@ -37,14 +33,12 @@ export const GameScene = ({ canvas }) => {
 
   const context = getContext(),
     titleText = Text({
-      ...baseTextConfig,
       text: 'Final\nLift',
       font: '84px sans-serif',
       x: canvas.width / 2,
       y: canvas.height * 0.4,
     }),
     startText = Text({
-      ...baseTextConfig,
       text: 'Press to start',
       font: '32px sans-serif',
       x: canvas.width / 2,
