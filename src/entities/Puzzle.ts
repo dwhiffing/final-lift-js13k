@@ -10,8 +10,10 @@ export const Puzzle = () => {
   const setText = (s = '') => {
     text.text = s
   }
+  let emojiTexts = []
   const generateNewPuzzle = (difficulty = 1, floor = 1) => {
     const generator = shuffle([
+      generateEmojiPuzzle,
       generateWordPuzzle,
       generateRatioPuzzle,
       generateEquationPuzzle,
@@ -25,6 +27,17 @@ export const Puzzle = () => {
     options = puzzle.options
     correctAnswer = puzzle.correctAnswer
     setText(puzzle.text)
+
+    const isEmoji = !!Object.keys(puzzle.emojiCounts ?? {}).length
+    if (isEmoji)
+      emojiTexts = placeTextInCircle(
+        puzzle.emojiCounts,
+        getCanvas().width / 2,
+        getCanvas().height * 0.36,
+        70,
+      )
+
+    text.y = isEmoji ? height * 0.55 : height * 0.5
   }
 
   const text = Text({
@@ -44,9 +57,85 @@ export const Puzzle = () => {
     getOptions: () => options,
     render() {
       text.render()
+      emojiTexts.forEach((t) => t.render())
     },
   }
 }
+const fruit = ['🍎', '🍌', '🍇', '🍓', '🍑']
+const generateEmojiPuzzle = (difficulty = 1) => {
+  const emojis = fruit.slice(0, difficulty + 1)
+  const numEmojis = Math.min(10 + difficulty * 2, 20)
+  const counts = emojis.reduce((acc, emoji) => {
+    acc[emoji] = 0
+    return acc
+  }, {})
+
+  for (let i = 0; i < numEmojis; i++) {
+    const emoji = shuffle(emojis)[0]
+    counts[emoji]++
+  }
+  const correctAnswer = Object.keys(counts).reduce((a, b) =>
+    counts[a] > counts[b] ? a : b,
+  )
+
+  const options = Object.keys(counts).filter((emoji) => counts[emoji] > 0)
+
+  return {
+    emojiCounts: counts,
+    text: `Which are there most of?`,
+    options: shuffle(options),
+    correctAnswer,
+  }
+}
+
+const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
+  const quadrants = Object.keys(emojiCounts).length
+  const angleStep = (2 * Math.PI) / quadrants
+  const gapAngle = angleStep * 0.1
+  const effectiveAngleStep = angleStep - gapAngle
+
+  const texts = []
+  let currentAngle = 0
+
+  const getRandomPosition = (angleStart, angleEnd, effectiveRadius) => ({
+    x:
+      centerX +
+      Math.random() *
+        effectiveRadius *
+        Math.cos(Math.random() * (angleEnd - angleStart) + angleStart),
+    y:
+      centerY +
+      Math.random() *
+        effectiveRadius *
+        Math.sin(Math.random() * (angleEnd - angleStart) + angleStart),
+  })
+
+  Object.entries(emojiCounts).forEach(([emoji, count]) => {
+    const angleRange: [number, number] = [
+      currentAngle,
+      currentAngle + effectiveAngleStep,
+    ]
+
+    for (let i = 0; i < count; i++) {
+      const { x, y } = getRandomPosition(...angleRange, radius)
+      texts.push(
+        Text({
+          color: '#fff',
+          text: emoji,
+          font: '24px Arial',
+          textAlign: 'center',
+          x,
+          y,
+        }),
+      )
+    }
+
+    currentAngle += angleStep
+  })
+
+  return texts
+}
+
 const generateWordPuzzle = (difficulty = 1) => {
   const wordList =
     'apple banana grape watermelon orange kiwi strawberry mango pineapple blueberry'.split(
