@@ -1,70 +1,22 @@
 import { getCanvas, Text } from 'kontra'
 import { baseTextConfig } from '../scenes/game'
+
 export const Puzzle = () => {
   const { width, height } = getCanvas()
 
-  let puzzle: string[] = []
   let options: string[] = []
-  let missingIndex = -1
   let correctAnswer = '-1'
+  const setText = (s = '') => {
+    text.text = s
+  }
   const generateNewPuzzle = (difficulty = 1) => {
-    const availableOperations = {
-      1: ['+'],
-      2: ['+', '-'],
-      3: ['+', '-', '*'],
-      4: ['+', '-', '*', '/'],
-    }
-
-    const operations = availableOperations[Math.min(difficulty, 4)]
-
-    let equation = ''
-
-    for (let i = 0; i < 2; i++) {
-      const num = Math.floor(Math.random() * 10) + 1
-      const operation =
-        operations[Math.floor(Math.random() * operations.length)]
-
-      equation += num
-
-      if (i < 1) {
-        equation += ` ${operation} `
-      }
-    }
-
-    const result = Math.floor(eval(equation))
-
-    puzzle = equation.split(' ').concat('=', `${result}`)
-
-    const hideOptions = Array.from(
-      { length: puzzle.length },
-      (_, i) => i,
-    ).filter((i) => !Number.isNaN(+puzzle[i]))
-    missingIndex = hideOptions[Math.floor(Math.random() * hideOptions.length)]
-
-    correctAnswer = puzzle[missingIndex]
-
-    options = []
-
-    const numOptions = Math.min(3 + difficulty, 7)
-    const errorRange = difficulty * 2
-
-    options.push(correctAnswer)
-
-    while (options.length < numOptions) {
-      const wrongAnswer =
-        +correctAnswer + Math.floor(Math.random() * errorRange * 2) - errorRange
-
-      if (
-        wrongAnswer !== +correctAnswer &&
-        !options.includes(`${wrongAnswer}`)
-      ) {
-        options.push(`${wrongAnswer}`)
-      }
-    }
-
-    options = options.sort(() => Math.random() - 0.5)
-
-    text.text = puzzle.map((s, i) => (i === missingIndex ? '_' : s)).join(' ')
+    let puzzle =
+      Math.random() > 0.5
+        ? generateEquationPuzzle(difficulty)
+        : generateSequencePuzzle(difficulty)
+    options = puzzle.options
+    correctAnswer = puzzle.correctAnswer
+    setText(puzzle.text)
   }
 
   const text = Text({
@@ -79,13 +31,70 @@ export const Puzzle = () => {
 
   return {
     generateNewPuzzle,
+    setText,
     getCorrectAnswer: () => correctAnswer,
     getOptions: () => options,
-    setText(_text) {
-      text.text = _text
-    },
     render() {
       text.render()
     },
+  }
+}
+const generateSequencePuzzle = (difficulty = 1) => {
+  const ops = { 1: ['+'], 2: ['+', '*'] }[Math.min(difficulty, 2)]
+  const op = ops[Math.floor(Math.random() * ops.length)]
+  let sequence = [],
+    start = Math.floor(Math.random() * 10) + 1,
+    step = Math.floor(Math.random() * 5) + 1
+
+  for (let i = 0; i < 4; i++) {
+    sequence.push(start)
+    start = op === '+' ? start + step : start * step
+  }
+
+  const correctAnswer = sequence.pop()
+  const options = [correctAnswer]
+
+  while (options.length < 3 + difficulty) {
+    let wrong =
+      correctAnswer +
+      Math.floor(Math.random() * difficulty * 4) -
+      difficulty * 2
+    if (!options.includes(wrong)) options.push(wrong)
+  }
+
+  return {
+    text: sequence.concat('_').join(', '),
+    options: options.sort(() => Math.random() - 0.5).map(String),
+    correctAnswer: `${correctAnswer}`,
+  }
+}
+const generateEquationPuzzle = (difficulty = 1) => {
+  const operations = ['+', '-', '*', '/'].slice(0, Math.min(difficulty, 4))
+  const equation = `${Math.floor(Math.random() * 10) + 1} ${operations[Math.floor(Math.random() * operations.length)]} ${Math.floor(Math.random() * 10) + 1}`
+  const result = Math.floor(eval(equation))
+
+  let equationArray = equation.split(' ').concat('=', `${result}`)
+  const hideOptions = equationArray
+    .map((_, i) => i)
+    .filter((i) => !isNaN(+equationArray[i]))
+  let missingIndex = hideOptions[Math.floor(Math.random() * hideOptions.length)]
+  let correctAnswer = equationArray[missingIndex]
+
+  const numOptions = Math.min(3 + difficulty, 7)
+  const options = [correctAnswer]
+
+  while (options.length < numOptions) {
+    const wrongAnswer =
+      +correctAnswer +
+      Math.floor(Math.random() * difficulty * 4) -
+      difficulty * 2
+    if (wrongAnswer !== +correctAnswer && !options.includes(`${wrongAnswer}`))
+      options.push(`${wrongAnswer}`)
+  }
+
+  return {
+    text: equationArray.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
+    options: options.sort(() => Math.random() - 0.5).map(String),
+    correctAnswer: `${correctAnswer}`,
   }
 }

@@ -1,7 +1,3 @@
-# add "sequence" puzzle (difficulty adds more options)
-
-sequence: The player is given a sequence of numbers and must determine the next number in the sequence. sequence gets more complicated based on difficulty
-
 # add count: player is shown a set of emojis rendered randomly, must select whichever there is more of
 
 # add music
@@ -29,7 +25,7 @@ such as "If 2 apples cost 5 coins, how many coins for 7 apples?"
 
 # scaling
 
-have difficulty increase as score goes up
+have difficulty increase as score goes up for various puzzles
 elevator options, should only have 2 options at first, goes up as score increases
 if score is lower, low level number is more likely, then high/deadly as it increases
 combo gives multiplier every 3 floors (would need some way to show in UI) (represent as lights under screen?)
