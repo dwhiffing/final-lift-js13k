@@ -123,8 +123,7 @@ export const Background = ({ canvas }) => {
     },
     toggleButtons(enabled = true) {
       buttons.forEach((b) => {
-        b.hovered = false
-        b.pressed = false
+        b.hovered = b.pressed = false
         b.disabled = b.text ? !enabled : true
       })
     },

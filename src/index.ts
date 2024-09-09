@@ -1,5 +1,4 @@
-import { init, initPointer, GameLoop, clamp, onPointer } from 'kontra'
-import MUSIC from './music'
+import { init, initPointer, GameLoop, clamp } from 'kontra'
 import { GameScene } from './scenes/game'
 import './zzfx'
 
@@ -24,6 +23,6 @@ const scene = GameScene({ canvas })
 window.addEventListener('resize', onResize)
 
 GameLoop({
-  update: (delta: number) => scene.update(delta),
+  update: () => scene.update(),
   render: () => scene.render(),
 }).start()

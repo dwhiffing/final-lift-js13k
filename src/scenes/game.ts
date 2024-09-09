@@ -14,48 +14,48 @@ import MUSIC from '../music'
 
 export let camera = { zoom: 1.05, x: 0, y: 0, sx: 0, sy: 0, si: 0 }
 export const baseTextConfig = {
-  color: '#ffffff',
+  color: '#fff',
   textAlign: 'center',
   anchor: { x: 0, y: 0.5 },
 }
-let music
-const baseAlpha = 0.75
-
-let a = document.getElementsByTagName('a')[0]
-a.addEventListener('click', (e) => {
+let music,
+  a = document.getElementsByTagName('a')[0],
+  baseAlpha = 0.75
+a.onclick = () => {
   music.playbackRate.value = a.innerHTML === 'mute' ? 0 : 1
   a.innerHTML = a.innerHTML === 'mute' ? 'unmute' : 'mute'
-  window.zzfxV = window.zzfxV === 0 ? 0.3 : 0
-})
+  // @ts-ignore
+  zzfxV = zzfxV ? 0 : 0.3
+}
 
 export const GameScene = ({ canvas }) => {
   const background = Background({ canvas })
   background.resize()
 
-  const shadow = new Path(['#000000'])
+  const shadow = new Path(['#000'])
   shadow.onResize(0, 0, canvas.width, canvas.height)
 
-  const context = getContext()
-  const titleText = Text({
-    ...baseTextConfig,
-    text: 'Final\nLift',
-    font: '84px sans-serif',
-    x: canvas.width / 2,
-    y: canvas.height * 0.4,
-  })
-  const startText = Text({
-    ...baseTextConfig,
-    text: 'Press to start',
-    font: '32px sans-serif',
-    x: canvas.width / 2,
-    y: canvas.height * 0.85,
-  })
+  const context = getContext(),
+    titleText = Text({
+      ...baseTextConfig,
+      text: 'Final\nLift',
+      font: '84px sans-serif',
+      x: canvas.width / 2,
+      y: canvas.height * 0.4,
+    }),
+    startText = Text({
+      ...baseTextConfig,
+      text: 'Press to start',
+      font: '32px sans-serif',
+      x: canvas.width / 2,
+      y: canvas.height * 0.85,
+    })
 
-  let floor = 0
   // time-paused,solve-puzzle,choose-floor,gameover
-  let phase = 3
-  let score = 0
-  let timer = 0
+  let floor = 0,
+    phase = 3,
+    score = 0,
+    timer = 0
 
   const moveCamera = async (p: {
     zoom?: number
@@ -133,12 +133,12 @@ export const GameScene = ({ canvas }) => {
     }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2 })
-    if (floor === 13) {
-      return onGameover()
-    }
-    const p = background.puzzle
-    const options = p.getOptions()
-    background.updateButtons(options, background.puzzle.getCorrectAnswer())
+    if (floor === 13) return onGameover()
+
+    background.updateButtons(
+      background.puzzle.getOptions(),
+      background.puzzle.getCorrectAnswer(),
+    )
     phase = 1
   }
 
@@ -163,7 +163,7 @@ export const GameScene = ({ canvas }) => {
     phase = 3
   }
 
-  const onFadeMenu = async (start = 1, end = 0) =>
+  const onFadeMenu = (start = 1, end = 0) =>
     startTimer(1000, (progress: number) => {
       startText.color =
         titleText.color = `#ffffff${floatToHex(lerpQuad(start, end, progress))}`
@@ -174,13 +174,9 @@ export const GameScene = ({ canvas }) => {
   on('press', async (buttonText) => {
     if (phase === 1) {
       phase = 2
-      if (buttonText === background.puzzle.getCorrectAnswer()) {
-        await finishFloor(true)
-      } else {
-        await finishFloor(false)
-      }
+      await finishFloor(buttonText === background.puzzle.getCorrectAnswer())
     } else {
-      floor += Number(buttonText)
+      floor += +buttonText
       await startFloor()
     }
   })
@@ -214,7 +210,7 @@ export const GameScene = ({ canvas }) => {
     }
   })
 
-  onPointer('down', (e) => {
+  onPointer('down', () => {
     window.__pointerDown = true
   })
 
@@ -223,7 +219,7 @@ export const GameScene = ({ canvas }) => {
     resize() {
       background.resize()
     },
-    update(delta: number) {
+    update() {
       background.update()
       canvas.style.cursor = background.buttons.some((b) => b.hovered)
         ? 'pointer'
