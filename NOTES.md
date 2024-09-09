@@ -1,4 +1,4 @@
-# add count: player is shown a set of emojis rendered randomly, must select whichever there is more of
+# add speed: press the buttons in order smallest to largest/vice versa, select only the odd/even numbers
 
 # add music
 
@@ -13,23 +13,17 @@ door close/open
 sound when swapping perspective
 game over sounds
 
-# add speed: press the buttons in order smallest to largest/vice versa, select only the odd/even numbers
-
 # scaling
 
+grabbag when generating puzzle types
 have difficulty increase as score goes up for various puzzles
 elevator options, should only have 2 options at first, goes up as score increases
 if score is lower, low level number is more likely, then high/deadly as it increases
+give higher time reward for different puzzles
 combo gives multiplier every 3 floors (would need some way to show in UI) (represent as lights under screen?)
+
 red eyes fade in on gameover
 light should flicker randomly
 button animations
-give higher time reward for different puzzles
 
 # add 7 segment display
-
-## add more types of puzzles
-
-memory: Numbers appear in a grid in the same shape as the elevator buttons. The buttons will be blank and the player must press them in order smallest to largest
-grid sums: The player is given a grid with numbers, and they must find the sum of numbers in specific rows, columns, or diagonals.
-audio based puzzle: count the number of beeps?

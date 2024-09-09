@@ -1,43 +1,35 @@
 import { getCanvas, Text } from 'kontra'
-import { shuffle } from '../utils'
+import { shuffle, randInt } from '../utils'
 import { baseTextConfig } from '../scenes/game'
 
 export const Puzzle = () => {
   const { width, height } = getCanvas()
+  let options: string[] = [],
+    correctAnswer = '-1',
+    emojiTexts = []
 
-  let options: string[] = []
-  let correctAnswer = '-1'
-  const setText = (s = '') => {
-    text.text = s
-  }
-  let emojiTexts = []
+  const setText = (s = '') => (text.text = s)
+
   const generateNewPuzzle = (difficulty = 1, floor = 1) => {
     const generator = shuffle([
-      generateEmojiPuzzle,
-      generateWordPuzzle,
-      generateRatioPuzzle,
-      generateEquationPuzzle,
-      generateFloorPuzzle,
-      generateSequencePuzzle,
+      generateEmojiPuzzle, // 140
+      generateWordPuzzle, // 170
+      generateRatioPuzzle, // 73
+      generateEquationPuzzle, // 124
+      generateFloorPuzzle, // 73
+      generateSequencePuzzle, // 70
     ])[0]
-    let puzzle = generator(difficulty, floor)
-    Math.random() > 0.5
-      ? generateEquationPuzzle(difficulty)
-      : generateSequencePuzzle(difficulty)
-    options = puzzle.options
-    correctAnswer = puzzle.correctAnswer
+
+    const puzzle = generator(difficulty, floor)
+    options = puzzle.options.map(String)
+    correctAnswer = `${puzzle.correctAnswer}`
     setText(puzzle.text)
 
-    const isEmoji = !!Object.keys(puzzle.emojiCounts ?? {}).length
-    if (isEmoji)
-      emojiTexts = placeTextInCircle(
-        puzzle.emojiCounts,
-        getCanvas().width / 2,
-        getCanvas().height * 0.36,
-        70,
-      )
+    emojiTexts = puzzle.emojiCounts
+      ? placeTextInCircle(puzzle.emojiCounts, width / 2, height * 0.36, 70)
+      : []
 
-    text.y = isEmoji ? height * 0.55 : height * 0.5
+    text.y = puzzle.emojiCounts ? height * 0.55 : height * 0.5
   }
 
   const text = Text({
@@ -61,71 +53,48 @@ export const Puzzle = () => {
     },
   }
 }
+
 const fruit = ['🍎', '🍌', '🍇', '🍓', '🍑']
+
 const generateEmojiPuzzle = (difficulty = 1) => {
   const emojis = fruit.slice(0, difficulty + 1)
-  const numEmojis = Math.min(10 + difficulty * 2, 20)
-  const counts = emojis.reduce((acc, emoji) => {
-    acc[emoji] = 0
-    return acc
-  }, {})
+  const counts = emojis.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {})
 
-  for (let i = 0; i < numEmojis; i++) {
-    const emoji = shuffle(emojis)[0]
-    counts[emoji]++
-  }
+  for (let i = 0; i < 20 + difficulty * 5; i++) counts[shuffle(emojis)[0]]++
   const correctAnswer = Object.keys(counts).reduce((a, b) =>
     counts[a] > counts[b] ? a : b,
   )
-
-  const options = Object.keys(counts).filter((emoji) => counts[emoji] > 0)
-
   return {
     emojiCounts: counts,
-    text: `Which are there most of?`,
-    options: shuffle(options),
+    text: 'Which are there most of?',
+    options: shuffle(Object.keys(counts)),
     correctAnswer,
   }
 }
 
 const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
-  const quadrants = Object.keys(emojiCounts).length
-  const angleStep = (2 * Math.PI) / quadrants
-  const gapAngle = angleStep * 0.1
-  const effectiveAngleStep = angleStep - gapAngle
+  const angleStep = (2 * Math.PI) / Object.keys(emojiCounts).length
+  const effectiveAngleStep = angleStep - angleStep * 0.1
 
   const texts = []
   let currentAngle = 0
 
-  const getRandomPosition = (angleStart, angleEnd, effectiveRadius) => ({
-    x:
-      centerX +
-      Math.random() *
-        effectiveRadius *
-        Math.cos(Math.random() * (angleEnd - angleStart) + angleStart),
-    y:
-      centerY +
-      Math.random() *
-        effectiveRadius *
-        Math.sin(Math.random() * (angleEnd - angleStart) + angleStart),
-  })
-
   Object.entries(emojiCounts).forEach(([emoji, count]) => {
-    const angleRange: [number, number] = [
-      currentAngle,
-      currentAngle + effectiveAngleStep,
-    ]
-
     for (let i = 0; i < count; i++) {
-      const { x, y } = getRandomPosition(...angleRange, radius)
+      const angleEnd = currentAngle + effectiveAngleStep
+      const a = angleEnd - currentAngle
       texts.push(
         Text({
           color: '#fff',
           text: emoji,
           font: '24px Arial',
           textAlign: 'center',
-          x,
-          y,
+          x:
+            centerX +
+            Math.random() * radius * Math.cos(Math.random() * a + currentAngle),
+          y:
+            centerY +
+            Math.random() * radius * Math.sin(Math.random() * a + currentAngle),
         }),
       )
     }
@@ -135,120 +104,65 @@ const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
 
   return texts
 }
-
 const generateWordPuzzle = (difficulty = 1) => {
-  const wordList =
-    'apple banana grape watermelon orange kiwi strawberry mango pineapple blueberry'.split(
-      ' ',
-    )
+  const isLongest = randInt(0, 1)
+  const shuffledWords = shuffle(FRUITS).slice(0, difficulty + 2)
 
-  const selectedWords = shuffle(wordList).slice(0, difficulty + 2)
-  const countVowels = (word) => (word.match(/[aeiou]/gi) || []).length
-
-  const getShortestWord = () =>
-    selectedWords.reduce((a, b) => (a.length < b.length ? a : b))
-  const getLongestWord = () =>
-    selectedWords.reduce((a, b) => (a.length > b.length ? a : b))
-
-  const questionType = Math.floor(Math.random() * 2)
-
-  let question = ''
-  let correctAnswer = 0
-
-  if (questionType === 0) {
-    question = `How many vowels does the shortest word have?`
-    correctAnswer = countVowels(getShortestWord())
-  } else {
-    question = `How many letters does the longest word have?`
-    correctAnswer = getLongestWord().length
+  const questionType = randInt(0, 2)
+  const countCharacters = (str, regex) => (str.match(regex) || []).length
+  const getMetric = (type) => {
+    if (type === 0) return (word) => countCharacters(word, /[aeiouy]/gi)
+    if (type === 1) return (word) => countCharacters(word, /[^aeiouy]/gi)
+    return (word) => word.length
   }
 
-  const options = [correctAnswer]
-  const errorRange = difficulty + 2
-
-  while (options.length < 3 + difficulty) {
-    let wrongAnswer =
-      correctAnswer + Math.floor(Math.random() * errorRange * 2) - errorRange
-    if (
-      wrongAnswer !== correctAnswer &&
-      !options.includes(wrongAnswer) &&
-      wrongAnswer > 0
-    ) {
-      options.push(wrongAnswer)
-    }
-  }
-
-  const shuffledOptions = shuffle(options)
+  const selectedWord = shuffledWords
+    .sort((a, b) => a.length - b.length)
+    .at(isLongest ? -1 : 0)
+  const correctAnswer = getMetric(questionType)(selectedWord)
+  const questionLabels = ['vowels', 'consonants', 'letters']
 
   return {
-    text: `Words: ${selectedWords.join(', ')}\n${question}`,
-    options: shuffledOptions.map(String),
-    correctAnswer: `${correctAnswer}`,
+    text: `${shuffledWords.join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
+    options: generateOptions(correctAnswer, difficulty, 3),
+    correctAnswer: correctAnswer,
   }
 }
 
 const generateRatioPuzzle = (difficulty = 1) => {
-  const apples1 = Math.floor(Math.random() * 4 + 1) * difficulty
-  const ratio = Math.floor(Math.random() * 5 + 2) * difficulty
-  const coins1 = apples1 * ratio
-  const apples2 = Math.floor(Math.random() * 6 + 3) * difficulty
-
-  const correctAnswer = Math.round((coins1 / apples1) * apples2)
-
-  const options = [correctAnswer]
-  const errorRange = difficulty * 5
-
-  while (options.length < 3 + difficulty) {
-    let wrongAnswer =
-      correctAnswer + Math.floor(Math.random() * errorRange * 2) - errorRange
-    if (
-      wrongAnswer !== correctAnswer &&
-      !options.includes(wrongAnswer) &&
-      wrongAnswer > 0
-    ) {
-      options.push(wrongAnswer)
-    }
-  }
-
-  const shuffledOptions = shuffle(options)
+  const [amount1, ratio] = [
+    difficulty * randInt(1, 4),
+    difficulty * randInt(2, 5),
+  ]
+  const coins1 = amount1 * ratio
+  const fruit = shuffle(FRUITS)[0]
+  const amount2 = difficulty * randInt(3, 6)
+  const correctAnswer = Math.round((coins1 / amount1) * amount2)
 
   return {
-    text: `If ${apples1} apples cost ${coins1} coins, how many coins for ${apples2} apples?`,
-    options: shuffledOptions.map(String),
-    correctAnswer: `${correctAnswer}`,
+    text: `${amount1} ${fruit}s cost $${coins1}. How much for ${amount2}?`,
+    options: generateOptions(correctAnswer, difficulty, 3),
+    correctAnswer: correctAnswer,
   }
 }
-const generateSequencePuzzle = (difficulty = 1) => {
-  const ops = { 1: ['+'], 2: ['+', '*'] }[Math.min(difficulty, 2)]
-  const op = ops[Math.floor(Math.random() * ops.length)]
-  let sequence = [],
-    start = Math.floor(Math.random() * 10) + 1,
-    step = Math.floor(Math.random() * 5) + 1
 
-  for (let i = 0; i < 4; i++) {
-    sequence.push(start)
-    start = op === '+' ? start + step : start * step
-  }
+const generateSequencePuzzle = (difficulty = 1) => {
+  let [start, step] = [randInt(1, 10), randInt(1, 5)]
+  const op = shuffle(['+', '*'].slice(0, difficulty))[0]
+  const sequence = Array(4)
+    .fill(0)
+    .map(() => (op === '+' ? (start += step) : (start *= step)))
 
   const correctAnswer = sequence.pop()
-  const options = [correctAnswer]
-
-  while (options.length < 3 + difficulty) {
-    let wrong =
-      correctAnswer +
-      Math.floor(Math.random() * difficulty * 4) -
-      difficulty * 2
-    if (!options.includes(wrong)) options.push(wrong)
-  }
-
   return {
     text: sequence.concat('_').join(', '),
-    options: shuffle(options).map(String),
-    correctAnswer: `${correctAnswer}`,
+    options: generateOptions(correctAnswer, difficulty, 3),
+    correctAnswer: correctAnswer,
   }
 }
+
 const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
-  const range = Math.max(2, difficulty * 3)
+  const range = difficulty * 3
   const possibleFloors = Array.from(
     { length: range * 2 + 1 },
     (_, i) => floor - range + i,
@@ -258,37 +172,40 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
 
   return {
     text: 'What floor are you on?',
-    options: options.map(String),
-    correctAnswer: `${floor}`,
+    options: options,
+    correctAnswer: floor,
   }
 }
+
 const generateEquationPuzzle = (difficulty = 1) => {
-  const operations = ['+', '-', '*', '/'].slice(0, Math.min(difficulty, 4))
-  const equation = `${Math.floor(Math.random() * 10) + 1} ${operations[Math.floor(Math.random() * operations.length)]} ${Math.floor(Math.random() * 10) + 1}`
-  const result = Math.floor(eval(equation))
-
-  let equationArray = equation.split(' ').concat('=', `${result}`)
-  const hideOptions = equationArray
-    .map((_, i) => i)
-    .filter((i) => !isNaN(+equationArray[i]))
-  let missingIndex = hideOptions[Math.floor(Math.random() * hideOptions.length)]
-  let correctAnswer = equationArray[missingIndex]
-
-  const numOptions = Math.min(3 + difficulty, 7)
-  const options = [correctAnswer]
-
-  while (options.length < numOptions) {
-    const wrongAnswer =
-      +correctAnswer +
-      Math.floor(Math.random() * difficulty * 4) -
-      difficulty * 2
-    if (wrongAnswer !== +correctAnswer && !options.includes(`${wrongAnswer}`))
-      options.push(`${wrongAnswer}`)
-  }
-
+  const [op] = shuffle(['+', '-', '*', '/'].slice(0, difficulty))
+  const [a, b] = [randInt(1, 9), randInt(1, 9)]
+  const result = Math.floor(
+    { '+': a + b, '-': a - b, '*': a * b, '/': a / b }[op],
+  )
+  const eq = [`${a}`, op, `${b}`, '=', `${result}`]
+  const missingIndex = shuffle(
+    eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])),
+  )[0]
   return {
-    text: equationArray.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
-    options: shuffle(options).map(String),
-    correctAnswer: `${correctAnswer}`,
+    text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
+    options: generateOptions(eq[missingIndex], difficulty, 3),
+    correctAnswer: eq[missingIndex],
   }
 }
+
+// Helper function to generate options
+const generateOptions = (correctAnswer, difficulty, optionCount) => {
+  const errorRange = difficulty * 5
+  const options = [+correctAnswer]
+  while (options.length < optionCount + difficulty) {
+    const wrongAnswer = +correctAnswer + randInt(-errorRange, errorRange)
+    if (!options.includes(wrongAnswer) && wrongAnswer > 0)
+      options.push(wrongAnswer)
+  }
+  return shuffle(options)
+}
+
+const FRUITS = 'kiwi apple banana apricot mandarin pineapple watermelon'.split(
+  ' ',
+)

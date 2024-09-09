@@ -98,3 +98,6 @@ const getFloorButton = (floor: number) => {
 
   return negative ? number * -1 : number
 }
+export function randInt(min, max) {
+  return ((Math.random() * (max - min + 1)) | 0) + min
+}
