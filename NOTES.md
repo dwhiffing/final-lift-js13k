@@ -13,13 +13,7 @@ door close/open
 sound when swapping perspective
 game over sounds
 
-# ratios: The player must solve problems involving ratios and propor
-
-such as "If 2 apples cost 5 coins, how many coins for 7 apples?"
-
 # add speed: press the buttons in order smallest to largest/vice versa, select only the odd/even numbers
-
-# word: show player a list of words then ask them a numeric question about it. Ie, how many vowels does the shortest word have. How many letters in the longest word
 
 # scaling
 
@@ -30,6 +24,7 @@ combo gives multiplier every 3 floors (would need some way to show in UI) (repre
 red eyes fade in on gameover
 light should flicker randomly
 button animations
+give higher time reward for different puzzles
 
 # add 7 segment display
 

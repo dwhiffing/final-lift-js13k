@@ -86,6 +86,7 @@ export const GameScene = ({ canvas }) => {
     if (phase === 1 && timer > 0) {
       setTimer(timer - 1)
       if (timer === 0) {
+        await startTimer(1000)
         await fade(0.5, 1)
         onGameover()
       }
