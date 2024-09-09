@@ -24,9 +24,10 @@ export const Puzzle = () => {
     correctAnswer = `${puzzle.correctAnswer}`
     setText(puzzle.text)
 
-    emojiTexts = puzzle.emojiCounts
-      ? placeTextInCircle(puzzle.emojiCounts, width / 2, height * 0.36, 70)
-      : []
+    emojiTexts =
+      puzzle.emojiCounts && floor != 13
+        ? placeTextInCircle(puzzle.emojiCounts, width / 2, height * 0.36, 70)
+        : []
 
     text.y = puzzle.emojiCounts ? height * 0.55 : height * 0.5
   }
