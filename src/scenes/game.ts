@@ -34,6 +34,7 @@ export const GameScene = ({ canvas }) => {
   let floor = 1
   // time-paused,solve-puzzle,choose-floor,gameover
   let phase = 0
+  let score = 0
   let timer = START_TIME
 
   const moveCamera = async (p: {
@@ -89,7 +90,10 @@ export const GameScene = ({ canvas }) => {
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
+      background.timer.setText(`SCORE`)
       await background.toggleDoor(1)
+      await startTimer(500)
+      background.timer.setText(`${score}`)
       background.puzzle.generateNewPuzzle()
     }
     await startTimer(intro ? 500 : 250)
@@ -111,6 +115,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   const finishFloor = async (success: boolean) => {
+    score += success ? 1 : 0
     setTimer(Math.min(99, timer + (success ? 5 : 0)))
 
     background.updateButtons(getFloorButtons(floor))

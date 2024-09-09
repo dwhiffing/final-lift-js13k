@@ -1,10 +1,8 @@
-# add scoring system
+# need gameover animation
 
-gain 1 point per floor
-display score in between floors
-have difficulty increase as score goes up
-elevator options, should only have 2 options at first, goes up as score increases
-if score is lower, low level number is more likely, then high/deadly as it increases
+ensure puzzle isn't shown when door opening for gave over
+should be black when doors open
+red eyes fade in?
 
 # need menu
 
@@ -13,13 +11,16 @@ just fade light to dark
 light should flicker randomly
 button animations
 
+# scaling
+
+have difficulty increase as score goes up
+elevator options, should only have 2 options at first, goes up as score increases
+if score is lower, low level number is more likely, then high/deadly as it increases
+combo gives multiplier every 3 floors (would need some way to show in UI) (represent as lights under screen?)
+
 # add "sequence" puzzle (difficulty adds more options)
 
 sequence: The player is given a sequence of numbers and must determine the next number in the sequence. sequence gets more complicated based on difficulty
-
-# need gameover animation: red eyes in the dark?
-
-combo gives multiplier every 3 floors
 
 # add music
 
