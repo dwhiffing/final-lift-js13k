@@ -41,7 +41,7 @@ export const Background = ({ canvas }) => {
 
   const buttons = []
   for (let i = 0; i < 15; i++) {
-    buttons.push(Button(0, 0, ``))
+    buttons.push(new Button())
   }
 
   const resize = () => {
@@ -124,13 +124,13 @@ export const Background = ({ canvas }) => {
     toggleButtons(enabled = true) {
       buttons.forEach((b) => {
         b.hovered = b.pressed = false
-        b.disabled = b.text ? !enabled : true
+        b.disabled = b.textNode.text ? !enabled : true
       })
     },
     updateButtons(labels: (string | number)[], correctAnswer?: string) {
       buttons.forEach((b, i) => {
         b.disabled = !labels[i]
-        b.text = labels[i] ? `${labels[i]}` : ''
+        b.textNode.text = labels[i] ? `${labels[i]}` : ''
         b.hasColorState = typeof correctAnswer === 'string'
         b.isCorrect =
           typeof correctAnswer === 'string' ? labels[i] === correctAnswer : true

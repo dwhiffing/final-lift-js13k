@@ -1,5 +1,5 @@
 diff --git a/node_modules/kontra/kontra.mjs b/node_modules/kontra/kontra.mjs
-index fc1d632..6dc2eb2 100644
+index fc1d632..e390924 100644
 --- a/node_modules/kontra/kontra.mjs
 +++ b/node_modules/kontra/kontra.mjs
 @@ -295,13 +295,13 @@ function collides(obj1, obj2) {
@@ -44,7 +44,30 @@ index fc1d632..6dc2eb2 100644
  
    let dx = circle.x - Math.max(x, Math.min(circle.x, x + width));
    let dy = circle.y - Math.max(y, Math.min(circle.y, y + height));
-@@ -2359,7 +2363,7 @@ class GameObject extends Updatable {
+@@ -554,17 +558,14 @@ function getContext() {
+  *
+  * @returns {{canvas: HTMLCanvasElement, context: CanvasRenderingContext2D}} An object with properties `canvas` and `context`. `canvas` it the canvas element for the game and `context` is the context object the game draws to.
+  */
+-function init$1(canvas, { contextless = false } = {}) {
++function init$1() {
+   // check if canvas is a string first, an element next, or default to
+   // getting first canvas on page
+-  canvasEl =
+-    document.getElementById(canvas) ||
+-    canvas ||
+-    document.querySelector('canvas');
++  canvasEl =document.querySelector('canvas');
+ 
+-  if (contextless) {
+-    canvasEl = canvasEl || new Proxy({}, handler$1);
+-  }
++  // if (contextless) {
++  //   canvasEl = canvasEl || new Proxy({}, handler$1);
++  // }
+ 
+   // @ifdef DEBUG
+   if (!canvasEl) {
+@@ -2359,7 +2360,7 @@ class GameObject extends Updatable {
  
    // @ifdef GAMEOBJECT_GROUP
    set children(value) {
@@ -53,7 +76,7 @@ index fc1d632..6dc2eb2 100644
      this.addChild(value);
    }
  
-@@ -2419,21 +2423,21 @@ class GameObject extends Updatable {
+@@ -2419,21 +2420,21 @@ class GameObject extends Updatable {
      });
    }
  
@@ -90,7 +113,7 @@ index fc1d632..6dc2eb2 100644
    // @endif
  
    // --------------------------------------------------
-@@ -2827,7 +2831,9 @@ class Text extends GameObject {
+@@ -2827,7 +2828,9 @@ class Text extends GameObject {
       * @memberof Text
       * @property {String} textAlign
       */
@@ -101,7 +124,7 @@ index fc1d632..6dc2eb2 100644
  
      /**
       * The distance between two lines of text. The value is multiplied by the texts font size.
-@@ -2858,7 +2864,7 @@ class Text extends GameObject {
+@@ -2858,7 +2861,7 @@ class Text extends GameObject {
        text,
        textAlign,
        lineHeight,
@@ -110,7 +133,7 @@ index fc1d632..6dc2eb2 100644
        ...props
      });
  
-@@ -3110,7 +3116,7 @@ function factory$7() {
+@@ -3110,7 +3113,7 @@ function factory$7() {
  // objects would block it later in the render order
  let pointers = new WeakMap();
  let callbacks$1 = {};
@@ -119,7 +142,7 @@ index fc1d632..6dc2eb2 100644
  
  /**
   * A map of pointer button indices to button names. Modify this object to expand the list of [available buttons](api/pointer#available-buttons).
-@@ -3197,51 +3203,10 @@ function getCanvasOffset(pointer) {
+@@ -3197,51 +3200,10 @@ function getCanvasOffset(pointer) {
    // we need to account for CSS scale, transform, border, padding,
    // and margin in order to get the correct scale and offset of the
    // canvas
@@ -173,7 +196,7 @@ index fc1d632..6dc2eb2 100644
  }
  
  /**
-@@ -3251,8 +3216,8 @@ function getCanvasOffset(pointer) {
+@@ -3251,8 +3213,8 @@ function getCanvasOffset(pointer) {
   */
  function pointerDownHandler(evt) {
    // touchstart should be treated like a left mouse button
@@ -184,7 +207,7 @@ index fc1d632..6dc2eb2 100644
    pointerHandler(evt, 'onDown');
  }
  
-@@ -3262,8 +3227,8 @@ function pointerDownHandler(evt) {
+@@ -3262,8 +3224,8 @@ function pointerDownHandler(evt) {
   * @param {MouseEvent|TouchEvent} evt
   */
  function pointerUpHandler(evt) {
@@ -195,7 +218,7 @@ index fc1d632..6dc2eb2 100644
    pointerHandler(evt, 'onUp');
  }
  
-@@ -3326,7 +3291,12 @@ function pointerHandler(evt, eventName) {
+@@ -3326,7 +3288,12 @@ function pointerHandler(evt, eventName) {
  
    let canvas = evt.target;
    let pointer = pointers.get(canvas);
@@ -209,7 +232,7 @@ index fc1d632..6dc2eb2 100644
    let isTouchEvent = evt.type.includes('touch');
  
    if (isTouchEvent) {
-@@ -3652,7 +3622,7 @@ function offPointer(direction) {
+@@ -3652,7 +3619,7 @@ function offPointer(direction) {
   * @returns {Boolean} `true` if the button is pressed, `false` otherwise.
   */
  function pointerPressed(button) {
@@ -218,262 +241,7 @@ index fc1d632..6dc2eb2 100644
  }
  
  /**
-@@ -3718,10 +3688,10 @@ class Button extends Sprite {
- 
-     // if the user didn't set a width/height or use an image
-     // default to the textNode dimensions
--    if (!this.width) {
--      this.width = this.textNode.width;
--      this.height = this.textNode.height;
--    }
-+    // if (!this.width) {
-+    //   this.width = this.textNode.width;
-+    //   this.height = this.textNode.height;
-+    // }
- 
-     track(this);
-     this.addChild(this.textNode);
-@@ -3734,21 +3704,21 @@ class Button extends Sprite {
- 
-     // create an accessible DOM node for screen readers
-     // dn = dom node
--    let button = (this._dn = document.createElement('button'));
--    button.style = srOnlyStyle;
--    button.textContent = this.text;
-+    // let button = (this._dn = document.createElement('button'));
-+    // button.style = srOnlyStyle;
-+    // button.textContent = this.text;
- 
-     if (disabled) {
-       this.disable();
-     }
- 
-     // sync events between the button element and the class
--    button.addEventListener('focus', () => this.focus());
--    button.addEventListener('blur', () => this.blur());
--    button.addEventListener('keydown', evt => this._kd(evt));
--    button.addEventListener('keyup', evt => this._ku(evt));
-+    // button.addEventListener('focus', () => this.focus());
-+    // button.addEventListener('blur', () => this.blur());
-+    // button.addEventListener('keydown', evt => this._kd(evt));
-+    // button.addEventListener('keyup', evt => this._ku(evt));
- 
--    addToDom(button, container ?? this.context.canvas);
-+    // addToDom(button, container ?? this.context.canvas);
- 
-     this._uw();
-     this._p();
-@@ -3769,30 +3739,13 @@ class Button extends Sprite {
-     this.textNode.text = value;
-   }
- 
--  /**
--   * The HTML button element associated with the button (used for accessibility). Typically you won't need to interact with the `node` directly, but it can be useful to move its position in the DOM to better support accessible component design.
--   * @memberof Button
--   * @property {HTMLButtonElement} node
--   */
--  get node() {
--    return this._dn;
--  }
-   // do not allow setting the node value by not having a setter
- 
--  /**
--   * Clean up the button by removing the HTMLButtonElement from the DOM.
--   * @memberof Button
--   * @function destroy
--   */
--  destroy() {
--    this._dn.remove();
--  }
--
-   _p() {
-     // update DOM node text if it has changed
--    if (this.text != this._dn.textContent) {
--      this._dn.textContent = this.text;
--    }
-+    // if (this.text != this._dn.textContent) {
-+    //   this._dn.textContent = this.text;
-+    // }
- 
-     // update width and height (need to prerender the button
-     // first)
-@@ -3825,8 +3778,8 @@ class Button extends Sprite {
-      * @memberof Button
-      * @property {Boolean} disabled
-      */
--    this.disabled = this._dn.disabled = false;
--    this.onEnable();
-+    this.disabled = false;
-+    // this.onEnable();
-   }
- 
-   /**
-@@ -3835,8 +3788,8 @@ class Button extends Sprite {
-    * @function disable
-    */
-   disable() {
--    this.disabled = this._dn.disabled = true;
--    this.onDisable();
-+    this.disabled = true;
-+    // this.onDisable();
-   }
- 
-   /**
-@@ -3844,34 +3797,34 @@ class Button extends Sprite {
-    * @memberof Button
-    * @function focus
-    */
--  focus() {
--    if (!this.disabled) {
--      /**
--       * If the button is focused.
--       * @memberof Button
--       * @property {Boolean} focused
--       */
--      this.focused = true;
--      // prevent infinite loop
--      if (document.activeElement != this._dn)
--        this._dn.focus(focusParams);
--
--      this.onFocus();
--    }
--  }
-+  // focus() {
-+  //   if (!this.disabled) {
-+  //     /**
-+  //      * If the button is focused.
-+  //      * @memberof Button
-+  //      * @property {Boolean} focused
-+  //      */
-+  //     this.focused = true;
-+  //     // prevent infinite loop
-+  //     // if (document.activeElement != this._dn)
-+  //     //   this._dn.focus(focusParams);
-+
-+  //     this.onFocus();
-+  //   }
-+  // }
- 
-   /**
-    * Blur the button. Calls [onBlur](api/button#onBlur) if passed.
-    * @memberof Button
-    * @function blur
-    */
--  blur() {
--    this.focused = false;
--    // prevent infinite loop
--    if (document.activeElement == this._dn) this._dn.blur();
-+  // blur() {
-+  //   this.focused = false;
-+  //   // prevent infinite loop
-+  //   // if (document.activeElement == this._dn) this._dn.blur();
- 
--    this.onBlur();
--  }
-+  //   this.onBlur();
-+  // }
- 
-   onOver() {
-     if (!this.disabled) {
-@@ -3888,33 +3841,33 @@ class Button extends Sprite {
-     this.hovered = false;
-   }
- 
--  /**
--   * Function called when then button is enabled. Override this function to have the button do something when enabled.
--   * @memberof Button
--   * @function onEnable
--   */
--  onEnable() {}
--
--  /**
--   * Function called when then button is disabled. Override this function to have the button do something when disabled.
--   * @memberof Button
--   * @function onDisable
--   */
--  onDisable() {}
--
--  /**
--   * Function called when then button is focused. Override this function to have the button do something when focused.
--   * @memberof Button
--   * @function onFocus
--   */
--  onFocus() {}
--
--  /**
--   * Function called when then button is blurred. Override this function to have the button do something when blurred.
--   * @memberof Button
--   * @function onBlur
--   */
--  onBlur() {}
-+  // /**
-+  //  * Function called when then button is enabled. Override this function to have the button do something when enabled.
-+  //  * @memberof Button
-+  //  * @function onEnable
-+  //  */
-+  // onEnable() {}
-+
-+  // /**
-+  //  * Function called when then button is disabled. Override this function to have the button do something when disabled.
-+  //  * @memberof Button
-+  //  * @function onDisable
-+  //  */
-+  // onDisable() {}
-+
-+  // /**
-+  //  * Function called when then button is focused. Override this function to have the button do something when focused.
-+  //  * @memberof Button
-+  //  * @function onFocus
-+  //  */
-+  // onFocus() {}
-+
-+  // /**
-+  //  * Function called when then button is blurred. Override this function to have the button do something when blurred.
-+  //  * @memberof Button
-+  //  * @function onBlur
-+  //  */
-+  // onBlur() {}
- 
-   onDown() {
-     if (!this.disabled) {
-@@ -3935,21 +3888,21 @@ class Button extends Sprite {
-     }
-   }
- 
--  // kd = keydown
--  _kd(evt) {
--    // activate button on enter or space
--    if (evt.code == 'Enter' || evt.code == 'Space') {
--      this.onDown();
--    }
--  }
--
--  // kd = keydown
--  _ku(evt) {
--    // activate button on enter or space
--    if (evt.code == 'Enter' || evt.code == 'Space') {
--      this.onUp();
--    }
--  }
-+  // // kd = keydown
-+  // _kd(evt) {
-+  //   // activate button on enter or space
-+  //   if (evt.code == 'Enter' || evt.code == 'Space') {
-+  //     this.onDown();
-+  //   }
-+  // }
-+
-+  // // kd = keydown
-+  // _ku(evt) {
-+  //   // activate button on enter or space
-+  //   if (evt.code == 'Enter' || evt.code == 'Space') {
-+  //     this.onUp();
-+  //   }
-+  // }
- }
- 
- function factory$6() {
-@@ -6455,7 +6408,7 @@ class Scene {
+@@ -6455,7 +6422,7 @@ class Scene {
        // move all objects to be in the scenes DOM node so we can
        // hide and show the DOM node and thus hide and show all the
        // objects
@@ -482,7 +250,7 @@ index fc1d632..6dc2eb2 100644
      });
    }
  
-@@ -6488,15 +6441,15 @@ class Scene {
+@@ -6488,15 +6455,15 @@ class Scene {
       * @memberof Scene
       * @property {Boolean} hidden
       */
@@ -505,7 +273,7 @@ index fc1d632..6dc2eb2 100644
  
      this.onShow();
    }
-@@ -6507,7 +6460,7 @@ class Scene {
+@@ -6507,7 +6474,7 @@ class Scene {
     * @function hide
     */
    hide() {
@@ -514,7 +282,7 @@ index fc1d632..6dc2eb2 100644
      this.onHide();
    }
  
-@@ -6518,7 +6471,7 @@ class Scene {
+@@ -6518,7 +6485,7 @@ class Scene {
     */
    destroy() {
      off('init', this._i);
