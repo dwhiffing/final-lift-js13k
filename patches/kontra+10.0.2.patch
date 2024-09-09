@@ -1,5 +1,5 @@
 diff --git a/node_modules/kontra/kontra.mjs b/node_modules/kontra/kontra.mjs
-index fc1d632..e390924 100644
+index fc1d632..acb629d 100644
 --- a/node_modules/kontra/kontra.mjs
 +++ b/node_modules/kontra/kontra.mjs
 @@ -295,13 +295,13 @@ function collides(obj1, obj2) {
@@ -241,6 +241,33 @@ index fc1d632..e390924 100644
  }
  
  /**
+@@ -4030,14 +3997,14 @@ function GameLoop({
+   let step = 1 / fps;
+   let clearFn = clearCanvas ? clear : noop;
+   let last, rAF, now, dt, loop;
+-  let focused = true;
++  window.__focused = true;
+ 
+   if (!blur) {
+     window.addEventListener('focus', () => {
+-      focused = true;
++      window.__focused = true;
+     });
+     window.addEventListener('blur', () => {
+-      focused = false;
++      window.__focused = false;
+     });
+   }
+ 
+@@ -4052,7 +4019,7 @@ function GameLoop({
+     rAF = requestAnimationFrame(frame);
+ 
+     // don't update the frame if tab isn't focused
+-    if (!focused) return;
++    if (!window.__focused) return;
+ 
+     now = performance.now();
+     dt = now - last;
 @@ -6455,7 +6422,7 @@ class Scene {
        // move all objects to be in the scenes DOM node so we can
        // hide and show the DOM node and thus hide and show all the

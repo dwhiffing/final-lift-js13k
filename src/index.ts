@@ -5,6 +5,7 @@ import './zzfx'
 declare global {
   interface Window {
     __pointerDown: boolean
+    __focused: boolean
     zzfxV: number
   }
 }
