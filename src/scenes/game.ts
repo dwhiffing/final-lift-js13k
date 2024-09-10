@@ -7,7 +7,7 @@ import {
   BASE_DURATION,
   getFloorButtons,
   lerpQuad,
-  MUSIC_DISABLED,
+  playSound,
   START_TIME,
 } from '../utils'
 import MUSIC from '../music'
@@ -117,7 +117,8 @@ export const GameScene = ({ canvas }) => {
     await startTimer(intro ? 500 : 250)
     if (!intro) {
       phase = -1
-      await startTimer(2500)
+      playSound('elevator')
+      await startTimer(1800)
       phase = 0
       await startTimer(500)
     }
@@ -145,9 +146,11 @@ export const GameScene = ({ canvas }) => {
   }
 
   const onGameover = async () => {
-    await fade(0, 1, 0)
-    background.updateButtons([])
     await startTimer(1000)
+    await fade(0, 1, 0)
+    playSound('gameover')
+    await startTimer(1000)
+    background.updateButtons([])
     await moveCamera({ zoom: 1.05, x: 0, duration: 0 })
 
     await background.toggleDoor(1, 0)
@@ -179,10 +182,10 @@ export const GameScene = ({ canvas }) => {
     window.__pointerDown = false
 
     if (!music) {
+      console.log(MUSIC.length)
       // @ts-ignore
-      music = zzfxP(...zzfxM(...MUSIC))
-      music.loop = true
-      if (MUSIC_DISABLED) a.click()
+      // music = zzfxP(...zzfxM(...MUSIC))
+      // music.loop = true
     }
 
     if (phase === 3) {
@@ -191,14 +194,17 @@ export const GameScene = ({ canvas }) => {
       setTimer(START_TIME)
       onFadeMenu()
       startFloor(true)
+      playSound('click')
     }
     if (phase === 1 && camera.zoom >= 2) {
       // @ts-ignore
       const x = e.offsetX ?? e.changedTouches[0].clientX
       const o = x / canvas.width
       if (camera.x === 0) {
+        playSound('swap')
         togglePan(true)
       } else if (camera.x === 200 && o < 0.3) {
+        playSound('swap')
         togglePan(false)
       }
     }
@@ -225,8 +231,8 @@ export const GameScene = ({ canvas }) => {
       const h = canvas.height / 2
       if (phase === -1 && ++camera.si % 6 === 0) {
         camera.si = 0
-        camera.sx = (1 - Math.random() * 2) * 1
-        camera.sy = (1 - Math.random() * 2) * 1
+        camera.sx = (1 - Math.random() * 2) * 2
+        camera.sy = (1 - Math.random() * 2) * 2
       }
       context.translate(w + camera.x + camera.sx, h + camera.y + camera.sy)
       context.scale(camera.zoom, camera.zoom)

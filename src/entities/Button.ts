@@ -2,10 +2,11 @@ import { emit, getCanvas, SpriteClass, Text, track } from 'kontra'
 import { startTimer } from '../utils/startTimer'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
-import { BASE_DURATION } from '../utils'
+import { BASE_DURATION, playSound } from '../utils'
 
 export class Button extends SpriteClass {
   init({ disabled = true, ...props } = {}) {
+    this.allowClick = true
     super.init({
       width: 15,
       height: 15,
@@ -103,12 +104,22 @@ export class Button extends SpriteClass {
   }
 
   onUp() {
-    if (!this.disabled) {
+    if (!this.disabled && this.allowClick) {
       this.pressed = false
       if (this.state !== 0) return
+
+      playSound(
+        !this.hasColorState
+          ? 'click'
+          : this.isCorrect
+            ? 'correct'
+            : 'incorrect',
+      )
+      this.allowClick = false
       this.state = this.isCorrect ? 2 : 3
       startTimer(BASE_DURATION).then(() => {
         emit('press', this.textNode.text)
+        this.allowClick = true
         this.state = 0
       })
     }

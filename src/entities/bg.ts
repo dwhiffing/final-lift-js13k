@@ -1,5 +1,5 @@
 import { clamp } from 'kontra'
-import { BASE_DURATION, lerpQuad } from '../utils'
+import { BASE_DURATION, lerpQuad, playSound } from '../utils'
 import { startTimer } from '../utils/startTimer'
 import { Button } from './Button'
 import { Timer } from './Timer'
@@ -136,7 +136,8 @@ export const Background = ({ canvas }) => {
           typeof correctAnswer === 'string' ? labels[i] === correctAnswer : true
       })
     },
-    toggleDoor(position = 1, duration = BASE_DURATION) {
+    toggleDoor(position = 1, duration = BASE_DURATION * 2) {
+      if (duration > 0) playSound('doors')
       return startTimer(duration, (progress) => {
         doorPosition = clamp(0.1, 1, position === 0 ? 1 - progress : progress)
         resize()
