@@ -1,4 +1,4 @@
-export const BASE_DURATION = 600
+export const BASE_DURATION = 500
 export const TIME_SCALE = 1
 export const MUSIC_DISABLED = true
 export const START_TIME = 60

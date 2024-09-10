@@ -106,11 +106,11 @@ export const GameScene = ({ canvas }) => {
 
   const togglePan = async (active = true) => {
     if (active) {
-      await moveCamera({ zoom: 4.25, x: 190, duration: BASE_DURATION * 0.75 })
+      await moveCamera({ zoom: 4.25, x: 190, duration: BASE_DURATION * 0.5 })
       background.toggleButtons(true)
     } else {
       background.toggleButtons(false)
-      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION * 0.75 })
+      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION * 0.5 })
     }
   }
 
@@ -221,7 +221,7 @@ export const GameScene = ({ canvas }) => {
       if (camera.x === 0) {
         playSound('swap')
         togglePan(true)
-      } else if (camera.x === 200 && o < 0.3) {
+      } else if (camera.x === 190 && o < 0.3) {
         playSound('swap')
         togglePan(false)
       }
