@@ -53,10 +53,10 @@ export const Puzzle = () => {
   }
 }
 
-const fruit = ['🍎', '🍌', '🍇', '🍓', '🍑']
+export const FRUIT_EMOJI = ['🍎', '🍌', '🍇', '🍓', '🍑']
 
 const generateEmojiPuzzle = (difficulty = 1) => {
-  const emojis = fruit.slice(0, difficulty + 1)
+  const emojis = FRUIT_EMOJI.slice(0, difficulty + 1)
   const counts = emojis.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {})
 
   for (let i = 0; i < 20 + difficulty * 5; i++) counts[shuffle(emojis)[0]]++

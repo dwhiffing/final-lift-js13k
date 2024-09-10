@@ -3,6 +3,7 @@ import { startTimer } from '../utils/startTimer'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 import { BASE_DURATION, playSound } from '../utils'
+import { FRUIT_EMOJI } from './Puzzle'
 
 export class Button extends SpriteClass {
   init({ disabled = true, ...props } = {}) {
@@ -80,6 +81,10 @@ export class Button extends SpriteClass {
 
   render() {
     if (this._d) this._p()
+
+    this.textNode.anchor.x = FRUIT_EMOJI.includes(this.textNode.text)
+      ? -0.25
+      : 0
 
     super.render()
   }
