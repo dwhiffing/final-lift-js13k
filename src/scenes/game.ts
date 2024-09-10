@@ -26,7 +26,6 @@ a.onclick = () => {
 
 export const GameScene = ({ canvas }) => {
   const background = Background({ canvas })
-  background.resize()
 
   const shadow = new Path(['#000'])
   shadow.onResize(0, 0, canvas.width, canvas.height)
@@ -118,7 +117,7 @@ export const GameScene = ({ canvas }) => {
     if (!intro) {
       phase = -1
       playSound('elevator')
-      await startTimer(1800)
+      await startTimer(1200)
       phase = 0
       await startTimer(500)
     }
@@ -127,7 +126,7 @@ export const GameScene = ({ canvas }) => {
       background.shadow.colors = [`#000000ff`]
     }
     background.toggleDoor(0)
-    await moveCamera({ zoom: 2 })
+    await moveCamera({ zoom: 2, duration: BASE_DURATION * 2 })
     if (floor === 13) return onGameover()
 
     background.updateButtons(
@@ -216,9 +215,6 @@ export const GameScene = ({ canvas }) => {
 
   return {
     shutdown() {},
-    resize() {
-      background.resize()
-    },
     update() {
       background.update()
       canvas.style.cursor = background.buttons.some((b) => b.hovered)

@@ -110,13 +110,14 @@ export const Background = ({ canvas }) => {
     })
   }
 
+  resize()
+
   return {
     buttons,
     doorPosition,
     timer: objs.timer,
     shadow: objs.shadow,
     puzzle: objs.puzzle,
-    resize,
     render() {
       const allObjects = [...Object.values(objs), ...buttons]
       allObjects.forEach((o) => o.render())

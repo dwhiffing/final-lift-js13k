@@ -12,16 +12,10 @@ declare global {
 const { canvas } = init()
 
 initPointer()
-function onResize() {
-  canvas.width = clamp(0, 400, window.innerWidth)
-  canvas.height = clamp(0, 700, window.innerHeight)
-  scene.resize()
-}
 
-canvas.width = clamp(0, 400, window.innerWidth)
-canvas.height = clamp(0, 700, window.innerHeight)
+canvas.width = 400
+canvas.height = 700
 const scene = GameScene({ canvas })
-window.addEventListener('resize', onResize)
 
 GameLoop({
   update: () => scene.update(),

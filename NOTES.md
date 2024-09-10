@@ -1,6 +1,7 @@
 grabbag when generating puzzle types
 camera shake on incorrect
 timer change should count up/down after each level
+floor puzzle shouldn't appear on floor 1, should always have 2 options so you can figure out what floor youre on
 better click sound
 
 # scaling
