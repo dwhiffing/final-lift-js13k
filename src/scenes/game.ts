@@ -118,7 +118,7 @@ export const GameScene = ({ canvas }) => {
     if (intro) {
       background.shadow.colors = [`#00000000`]
       await fade(baseAlpha, 0.5)
-      background.puzzle.generateNewPuzzle(1, floor)
+      background.puzzle.nextPuzzle(1, floor)
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
@@ -126,7 +126,7 @@ export const GameScene = ({ canvas }) => {
       await background.toggleDoor(1)
       await startTimer(500)
       background.timer.setText(`${score}`)
-      background.puzzle.generateNewPuzzle(1, floor)
+      background.puzzle.nextPuzzle(1, floor)
     }
     await startTimer(intro ? 500 : 250)
     if (!intro) {
@@ -184,12 +184,13 @@ export const GameScene = ({ canvas }) => {
     window.__disableClick = true
     const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
     if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
-    await startTimer(BASE_DURATION * 2)
     if (phase === 1) {
       phase = 2
+      await startTimer(BASE_DURATION * 2)
       await finishFloor(isCorrect)
     } else {
       floor += +buttonText
+      await startTimer(BASE_DURATION * 2)
       await startFloor()
     }
     window.__disableClick = false

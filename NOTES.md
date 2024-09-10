@@ -1,7 +1,5 @@
-grabbag when generating puzzle types
-fix emoji alignment
 timer change should count up/down after each level
-floor puzzle shouldn't appear on floor 1, should always have 2 options so you can figure out what floor youre on
+should always have 2 options so you can figure out what floor youre on
 
 have difficulty increase as score goes up for various puzzles
 elevator options, should only have 2 options at first, goes up as score increases

@@ -1,6 +1,7 @@
 import { getCanvas, Text } from 'kontra'
 import { shuffle, randInt } from '../utils'
 
+let puzzleQueue = []
 export const Puzzle = () => {
   const { width, height } = getCanvas()
   let options: string[] = [],
@@ -9,15 +10,19 @@ export const Puzzle = () => {
 
   const setText = (s = '') => (text.text = s)
 
-  const generateNewPuzzle = (difficulty = 1, floor = 1) => {
-    const generator = shuffle([
-      generateEmojiPuzzle, // 140
-      generateWordPuzzle, // 170
-      generateRatioPuzzle, // 73
-      generateEquationPuzzle, // 124
-      generateFloorPuzzle, // 73
-      generateSequencePuzzle, // 70
-    ])[0]
+  const nextPuzzle = (difficulty = 1, floor = 1) => {
+    if (puzzleQueue.length === 0) {
+      puzzleQueue = shuffle([
+        generateEmojiPuzzle, // 140
+        generateWordPuzzle, // 170
+        generateRatioPuzzle, // 73
+        generateEquationPuzzle, // 124
+        generateFloorPuzzle, // 73
+        generateSequencePuzzle, // 70
+      ])
+    }
+
+    const generator = puzzleQueue.shift()
 
     const puzzle = generator(difficulty, floor)
     options = puzzle.options.map(String)
@@ -42,7 +47,7 @@ export const Puzzle = () => {
   })
 
   return {
-    generateNewPuzzle,
+    nextPuzzle,
     setText,
     getCorrectAnswer: () => correctAnswer,
     getOptions: () => options,
