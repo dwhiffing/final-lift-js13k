@@ -171,7 +171,7 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
     (_, i) => floor - range + i,
   ).filter((f) => f !== floor)
 
-  const options = shuffle([floor, ...shuffle(possibleFloors).slice(0, 4)])
+  const options = shuffle([floor, ...shuffle(possibleFloors).slice(0, 2)])
 
   return {
     text: 'What floor are you on?',
