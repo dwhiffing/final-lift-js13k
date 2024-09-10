@@ -1,5 +1,6 @@
+ensure only one button click at a time
 grabbag when generating puzzle types
-camera shake on incorrect
+fix emoji alignment
 timer change should count up/down after each level
 floor puzzle shouldn't appear on floor 1, should always have 2 options so you can figure out what floor youre on
 better click sound

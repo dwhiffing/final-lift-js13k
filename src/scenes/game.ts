@@ -12,7 +12,22 @@ import {
 } from '../utils'
 import MUSIC from '../music'
 
-export let camera = { zoom: 1.05, x: 0, y: 0, sx: 0, sy: 0, si: 0 }
+export let camera = {
+  zoom: 1.05,
+  x: 0,
+  y: 0,
+  sx: 0,
+  sy: 0,
+  i: 0,
+  m: 0,
+  f: 0,
+  shake: async (m: number, f: number, duration: number) => {
+    camera.m = m
+    camera.f = f
+    await startTimer(duration)
+    camera.m = camera.f = camera.sy = camera.sx = 0
+  },
+}
 
 let music,
   a = document.getElementsByTagName('a')[0],
@@ -91,7 +106,7 @@ export const GameScene = ({ canvas }) => {
 
   const togglePan = async (active = true) => {
     if (active) {
-      await moveCamera({ zoom: 3.5, x: 200, duration: BASE_DURATION * 0.75 })
+      await moveCamera({ zoom: 4.25, x: 190, duration: BASE_DURATION * 0.75 })
       background.toggleButtons(true)
     } else {
       background.toggleButtons(false)
@@ -115,10 +130,8 @@ export const GameScene = ({ canvas }) => {
     }
     await startTimer(intro ? 500 : 250)
     if (!intro) {
-      phase = -1
       playSound('elevator')
-      await startTimer(1200)
-      phase = 0
+      await camera.shake(2.75, 4, 1200)
       await startTimer(500)
     }
     if (floor === 13) {
@@ -168,9 +181,12 @@ export const GameScene = ({ canvas }) => {
   fade(1, baseAlpha, 0)
 
   on('press', async (buttonText) => {
+    const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
+    if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
+    await startTimer(BASE_DURATION * 2)
     if (phase === 1) {
       phase = 2
-      await finishFloor(buttonText === background.puzzle.getCorrectAnswer())
+      await finishFloor(isCorrect)
     } else {
       floor += +buttonText
       await startFloor()
@@ -225,10 +241,10 @@ export const GameScene = ({ canvas }) => {
       context.save()
       const w = canvas.width / 2
       const h = canvas.height / 2
-      if (phase === -1 && ++camera.si % 6 === 0) {
-        camera.si = 0
-        camera.sx = (1 - Math.random() * 2) * 2
-        camera.sy = (1 - Math.random() * 2) * 2
+      if (++camera.i % camera.f === 0) {
+        camera.i = 0
+        camera.sx = (1 - Math.random() * 2) * camera.m
+        camera.sy = (1 - Math.random() * 2) * camera.m
       }
       context.translate(w + camera.x + camera.sx, h + camera.y + camera.sy)
       context.scale(camera.zoom, camera.zoom)
