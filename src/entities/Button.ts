@@ -6,7 +6,6 @@ import { BASE_DURATION, playSound } from '../utils'
 
 export class Button extends SpriteClass {
   init({ disabled = true, ...props } = {}) {
-    this.allowClick = true
     super.init({
       width: 15,
       height: 15,
@@ -104,9 +103,9 @@ export class Button extends SpriteClass {
   }
 
   onUp() {
-    if (!this.disabled && this.allowClick) {
-      this.pressed = false
+    if (!this.disabled && !window.__disableClick) {
       if (this.state !== 0) return
+      this.pressed = false
 
       playSound(
         !this.hasColorState
@@ -115,11 +114,9 @@ export class Button extends SpriteClass {
             ? 'correct'
             : 'incorrect',
       )
-      this.allowClick = false
       this.state = this.isCorrect ? 2 : 3
-      startTimer(BASE_DURATION).then(() => {
-        emit('press', this.textNode.text)
-        this.allowClick = true
+      emit('press', this.textNode.text)
+      startTimer(BASE_DURATION * 2).then(() => {
         this.state = 0
       })
     }

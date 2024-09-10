@@ -181,6 +181,7 @@ export const GameScene = ({ canvas }) => {
   fade(1, baseAlpha, 0)
 
   on('press', async (buttonText) => {
+    window.__disableClick = true
     const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
     if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
     await startTimer(BASE_DURATION * 2)
@@ -191,6 +192,7 @@ export const GameScene = ({ canvas }) => {
       floor += +buttonText
       await startFloor()
     }
+    window.__disableClick = false
   })
 
   onPointer('up', (e) => {

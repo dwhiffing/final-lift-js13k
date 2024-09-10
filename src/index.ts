@@ -6,6 +6,7 @@ declare global {
   interface Window {
     __pointerDown: boolean
     __focused: boolean
+    __disableClick: boolean
     zzfxV: number
   }
 }
