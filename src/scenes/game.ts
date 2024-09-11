@@ -151,13 +151,13 @@ export const GameScene = ({ canvas }) => {
       await delayedCall(500)
     }
     if (floor === 13) {
-      background.puzzle.setText('')
+      background.puzzle.setText('13', '#ff0000')
     }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2, duration: BASE_DURATION * 2 })
     if (floor === 13) {
-      await delayedCall(1000)
-      await fade(0, 1, 0)
+      await delayedCall(BASE_DURATION)
+      fade(0.5, 1)
       return onGameover()
     }
 

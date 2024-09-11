@@ -8,7 +8,10 @@ export const Puzzle = () => {
     correctAnswer = '-1',
     emojiTexts = []
 
-  const setText = (s = '') => (text.text = s)
+  const setText = (s = '', color = '#fff') => {
+    text.text = s
+    text.color = color
+  }
 
   const nextPuzzle = (difficulty = 1, floor = 1) => {
     if (puzzleQueue.length === 0) {
