@@ -59,9 +59,9 @@ export const GameScene = ({ canvas }) => {
       y: canvas.height * 0.85,
     })
 
-  // time-paused,solve-puzzle,choose-floor,gameover
+  // phases: 0: time-paused, 1: solve-puzzle, 2: choose-floor, 3: gameover, 4: menu
   let floor = 0,
-    phase = 3,
+    phase = 4,
     score = 0,
     timer = 0
 
@@ -92,7 +92,7 @@ export const GameScene = ({ canvas }) => {
       return background.timer.setText(`${timer}`)
     }
     const diff = value > 0 ? 1 : -1
-    while (value !== 0) {
+    while (value !== 0 && timer > 0) {
       value += diff * -1
       timer = Math.min(99, timer + diff)
       background.timer.setText(`${timer}`)
@@ -101,11 +101,11 @@ export const GameScene = ({ canvas }) => {
     }
   }
   const updateTimer = async () => {
-    if (phase === 1 && timer > 0) {
+    if (phase === 1) {
       setTimer(-1)
-      if (timer === 0) {
-        await startTimer(1000)
-        await fade(0.5, 1)
+      if (timer <= 0) {
+        setTimer(0, true)
+        fade(0.5, 1)
         onGameover()
       }
     }
@@ -152,7 +152,11 @@ export const GameScene = ({ canvas }) => {
     }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2, duration: BASE_DURATION * 2 })
-    if (floor === 13) return onGameover()
+    if (floor === 13) {
+      await startTimer(1000)
+      await fade(0, 1, 0)
+      return onGameover()
+    }
 
     background.updateButtons(
       background.puzzle.getOptions(),
@@ -161,17 +165,19 @@ export const GameScene = ({ canvas }) => {
     phase = 1
   }
 
-  const finishFloor = async (success: boolean) => {
-    score += success ? 1 : 0
-    setTimer(success ? 5 : 0)
+  const finishFloor = async () => {
+    // TODO: change score/time based on difficulty
+    score += 1
+    setTimer(5)
 
     background.updateButtons(getFloorButtons(floor))
     await togglePan(true)
   }
 
   const onGameover = async () => {
-    await startTimer(1000)
-    await fade(0, 1, 0)
+    if (phase === 3) return
+    phase = 3
+
     playSound('gameover')
     await startTimer(1000)
     background.updateButtons([])
@@ -181,7 +187,7 @@ export const GameScene = ({ canvas }) => {
     await fade(1, baseAlpha)
     startText.text = `Score: ${score}`
     onFadeMenu(0, 1)
-    phase = 3
+    phase = 4
   }
 
   const onFadeMenu = (start = 1, end = 0) =>
@@ -197,9 +203,13 @@ export const GameScene = ({ canvas }) => {
     const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
     if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
     if (phase === 1) {
-      phase = 2
-      await startTimer(BASE_DURATION * 2)
-      await finishFloor(isCorrect)
+      if (isCorrect) {
+        phase = 2
+        await startTimer(BASE_DURATION * 2)
+        await finishFloor()
+      } else {
+        setTimer(-3)
+      }
     } else {
       floor += +buttonText
       await startTimer(BASE_DURATION * 2)
@@ -218,7 +228,7 @@ export const GameScene = ({ canvas }) => {
       // music.loop = true
     }
 
-    if (phase === 3) {
+    if (phase === 4) {
       phase = 0
       floor = 1
       setTimer(START_TIME, true)
