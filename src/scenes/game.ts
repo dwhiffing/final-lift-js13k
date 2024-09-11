@@ -106,11 +106,11 @@ export const GameScene = ({ canvas }) => {
 
   const togglePan = async (active = true) => {
     if (active) {
-      await moveCamera({ zoom: 4.25, x: 190, duration: BASE_DURATION * 0.5 })
+      await moveCamera({ zoom: 4.25, x: 190, duration: BASE_DURATION })
       background.toggleButtons(true)
     } else {
       background.toggleButtons(false)
-      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION * 0.5 })
+      await moveCamera({ zoom: 2, x: 0, duration: BASE_DURATION })
     }
   }
 
