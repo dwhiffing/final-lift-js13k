@@ -31,13 +31,14 @@ export const playSound = (key) => {
 export const toggleMute = () => (muted = !muted)
 
 export function shuffle(array) {
+  const cloned = [...array]
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1))
-    var temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
+    var temp = cloned[i]
+    cloned[i] = cloned[j]
+    cloned[j] = temp
   }
-  return array
+  return cloned
 }
 
 function quadraticEaseInOut(t) {
