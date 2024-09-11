@@ -181,27 +181,41 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
 }
 
 const generateEquationPuzzle = (difficulty = 1) => {
-  const [op] = shuffle(['+', '-', '*', '/'].slice(0, difficulty))
-  const [a, b] = [randInt(1, 9), randInt(1, 9)]
+  const div = Math.ceil(difficulty / 3)
+  const mod = 1 + ((difficulty - 1) % 3)
+  const availableOps = ['+', '-', '*'].slice(0, mod)
+  const ops = genArray(div)
+    .map((_, i) => (i === 0 ? availableOps[mod - 1] : shuffle(availableOps)[0]))
+    .sort((a, b) => (a === '*' ? -1 : b === '*' ? 1 : 0))
+  const numbers = genArray(div + 1).map(() => randInt(1, div * 3))
   const result = Math.floor(
-    { '+': a + b, '-': a - b, '*': a * b, '/': a / b }[op],
+    numbers.reduce(
+      (a, b, i) =>
+        ({ '+': a + b, '-': a - b, '*': a * b, '/': a / b })[ops[i - 1]],
+    ),
   )
-  const eq = [`${a}`, op, `${b}`, '=', `${result}`]
+
+  let eq = []
+  while (numbers.length) {
+    eq.push(numbers.pop())
+    if (ops.length) eq.push(ops.pop())
+  }
+
+  eq = eq.concat(['=', `${result}`])
   const missingIndex = shuffle(
     eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])),
   )[0]
   return {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
-    options: generateOptions(eq[missingIndex], difficulty, 3),
+    options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
     correctAnswer: eq[missingIndex],
   }
 }
 
 // Helper function to generate options
-const generateOptions = (correctAnswer, difficulty, optionCount) => {
-  const errorRange = difficulty * 5
+const generateOptions = (correctAnswer, errorRange, optionCount) => {
   const options = [+correctAnswer]
-  while (options.length < optionCount + difficulty) {
+  while (options.length < optionCount) {
     const wrongAnswer = +correctAnswer + randInt(-errorRange, errorRange)
     if (!options.includes(wrongAnswer) && wrongAnswer > 0)
       options.push(wrongAnswer)
@@ -209,6 +223,7 @@ const generateOptions = (correctAnswer, difficulty, optionCount) => {
   return shuffle(options)
 }
 
+const genArray = (s: number) => new Array(s).fill('')
 const FRUITS = 'kiwi apple banana apricot mandarin pineapple watermelon'.split(
   ' ',
 )
