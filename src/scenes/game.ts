@@ -134,10 +134,8 @@ export const GameScene = ({ canvas }) => {
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
-      background.timer.setText(`SCORE`)
       await background.toggleDoor(1)
       await startTimer(500)
-      background.timer.setText(`${score}`)
       background.puzzle.nextPuzzle(difficulty, floor)
     }
     await startTimer(intro ? 500 : 250)
