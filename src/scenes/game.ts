@@ -115,10 +115,12 @@ export const GameScene = ({ canvas }) => {
   }
 
   const startFloor = async (intro = false) => {
+    // const difficulty = 5
+    const difficulty = Math.min(9, Math.ceil(1 + score / 3))
     if (intro) {
       background.shadow.colors = [`#00000000`]
       await fade(baseAlpha, 0.5)
-      background.puzzle.nextPuzzle(1, floor)
+      background.puzzle.nextPuzzle(difficulty, floor)
     } else {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
@@ -126,7 +128,7 @@ export const GameScene = ({ canvas }) => {
       await background.toggleDoor(1)
       await startTimer(500)
       background.timer.setText(`${score}`)
-      background.puzzle.nextPuzzle(1, floor)
+      background.puzzle.nextPuzzle(difficulty, floor)
     }
     await startTimer(intro ? 500 : 250)
     if (!intro) {
