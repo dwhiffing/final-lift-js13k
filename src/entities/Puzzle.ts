@@ -16,8 +16,8 @@ export const Puzzle = () => {
         generateEmojiPuzzle, // 140
         generateWordPuzzle, // 170
         generateRatioPuzzle, // 73
-        generateEquationPuzzle, // 124
-        generateFloorPuzzle, // 73
+        generateEquationPuzzle, // 240
+        generateFloorPuzzle, // 75
         generateSequencePuzzle, // 70
       ])
     }
@@ -165,13 +165,15 @@ const generateSequencePuzzle = (difficulty = 1) => {
 }
 
 const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
-  const range = difficulty * 3
-  const possibleFloors = Array.from(
-    { length: range * 2 + 1 },
-    (_, i) => floor - range + i,
-  ).filter((f) => f !== floor)
+  const range = difficulty * 2
+  const possibleFloors = genArray(range * 2 + 1)
+    .map((_, i) => floor - range + i)
+    .filter((f) => f > 0 && f !== floor)
 
-  const options = shuffle([floor, ...shuffle(possibleFloors).slice(0, 2)])
+  const options = shuffle([
+    floor,
+    ...shuffle(possibleFloors).slice(0, difficulty),
+  ])
 
   return {
     text: 'What floor are you on?',

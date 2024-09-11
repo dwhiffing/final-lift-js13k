@@ -1,16 +1,18 @@
-have difficulty increase as score goes up for various puzzles
-elevator options, should only have 2 options at first, goes up as score increases
-if score is lower, low level number is more likely, then high/deadly as it increases
-give higher time reward for different puzzles
-combo gives multiplier every 3 floors (would need some way to show in UI) (represent as lights under screen?)
-game goes faster as score increases
-timer change should count up/down after each level
+difficulty for emoji
+difficulty for word
+difficulty for ratio
+difficulty for sequence
+difficulty for elevator options
 
-better click sound
-red eyes fade in on gameover
-light should flicker randomly
-button animations
-
-add music
-add speed: press the buttons in order smallest to largest/vice versa, select only the odd/even numbers
+difficulty acts as time/score/speed multiplier
+better background when door is open (maybe just make it black?)
+red eyes fade in on gameover (fade in number 13?)
+light should flicker randomly as time runs out
 add 7 segment display
+
+add speed: press the buttons in order smallest to largest/vice versa, select only the odd/even numbers
+Word to Digit: displays different things to indicate a digit. starts with word, then roman numeral, then emoji
+
+button animations
+better click sound
+add music (reuse machine music as backup)
