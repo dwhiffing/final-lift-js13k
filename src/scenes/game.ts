@@ -13,6 +13,14 @@ import {
 } from '../utils'
 import MUSIC from '../music'
 
+enum Phase {
+  TIME_PAUSED = 0,
+  SOLVE_PUZZLE,
+  CHOOSE_FLOOR,
+  GAME_OVER,
+  MENU,
+}
+
 export let camera = {
   zoom: 1.05,
   x: 0,
@@ -60,9 +68,8 @@ export const GameScene = ({ canvas }) => {
       y: canvas.height * 0.85,
     })
 
-  // phases: 0: time-paused, 1: solve-puzzle, 2: choose-floor, 3: gameover, 4: menu
   let floor = 0,
-    phase = 4,
+    phase = Phase.MENU,
     score = 0,
     timer = 0,
     difficulty = 0
@@ -103,7 +110,7 @@ export const GameScene = ({ canvas }) => {
     }
   }
   const updateTimer = async () => {
-    if (phase === 1) {
+    if (phase === Phase.SOLVE_PUZZLE || phase === Phase.CHOOSE_FLOOR) {
       setTimer(-1)
       if (timer <= 0) {
         setTimer(0, true)
@@ -160,7 +167,7 @@ export const GameScene = ({ canvas }) => {
       background.puzzle.getOptions(),
       background.puzzle.getCorrectAnswer(),
     )
-    phase = 1
+    phase = Phase.SOLVE_PUZZLE
   }
 
   const finishFloor = async () => {
@@ -174,8 +181,8 @@ export const GameScene = ({ canvas }) => {
   }
 
   const onGameover = async () => {
-    if (phase === 3) return
-    phase = 3
+    if (phase === Phase.GAME_OVER) return
+    phase = Phase.GAME_OVER
 
     playSound('gameover')
     await delayedCall(1000)
@@ -186,7 +193,7 @@ export const GameScene = ({ canvas }) => {
     await fade(1, baseAlpha)
     startText.text = `Score: ${score}`
     onFadeMenu(0, 1)
-    phase = 4
+    phase = Phase.MENU
   }
 
   const onFadeMenu = (start = 1, end = 0) =>
@@ -198,14 +205,15 @@ export const GameScene = ({ canvas }) => {
   fade(1, baseAlpha, 0)
 
   on('press', async (buttonText) => {
-    if (phase !== 1 && phase !== 2) return
+    if (phase !== Phase.SOLVE_PUZZLE && phase !== Phase.CHOOSE_FLOOR) return
 
     window.__disableClick = true
     const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
-    if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
-    if (phase === 1) {
+    if (!isCorrect && phase === Phase.SOLVE_PUZZLE)
+      camera.shake(7, 1, BASE_DURATION / 2)
+    if (phase === Phase.SOLVE_PUZZLE) {
       if (isCorrect) {
-        phase = 2
+        phase = Phase.CHOOSE_FLOOR
         await delayedCall(BASE_DURATION * 2)
         await finishFloor()
       } else {
@@ -213,6 +221,7 @@ export const GameScene = ({ canvas }) => {
       }
     } else {
       floor += +buttonText
+      phase = Phase.TIME_PAUSED
       await delayedCall(BASE_DURATION * 2)
       await startFloor()
     }
@@ -234,8 +243,8 @@ export const GameScene = ({ canvas }) => {
       // music.loop = true
     }
 
-    if (phase === 4) {
-      phase = 0
+    if (phase === Phase.MENU) {
+      phase = Phase.TIME_PAUSED
       floor = 1
       score = 0
       updateDifficulty()
@@ -244,7 +253,7 @@ export const GameScene = ({ canvas }) => {
       startFloor(true)
       playSound('click')
     }
-    if (phase === 1 && camera.zoom >= 2) {
+    if (phase === Phase.SOLVE_PUZZLE && camera.zoom >= 2) {
       // @ts-ignore
       const x = e.offsetX ?? e.changedTouches[0].clientX
       const o = x / canvas.width
