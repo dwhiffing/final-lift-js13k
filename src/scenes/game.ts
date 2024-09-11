@@ -86,14 +86,23 @@ export const GameScene = ({ canvas }) => {
     })
   }
 
-  const setTimer = (value: number) => {
-    timer = value
-    background.timer.setText(`${timer}`)
+  const setTimer = async (value: number, absolute = false) => {
+    if (absolute) {
+      timer = value
+      return background.timer.setText(`${timer}`)
+    }
+    const diff = value > 0 ? 1 : -1
+    while (value !== 0) {
+      value += diff * -1
+      timer = Math.min(99, timer + diff)
+      background.timer.setText(`${timer}`)
+      playSound('click')
+      await startTimer(100)
+    }
   }
   const updateTimer = async () => {
     if (phase === 1 && timer > 0) {
-      setTimer(timer - 1)
-      playSound('click')
+      setTimer(-1)
       if (timer === 0) {
         await startTimer(1000)
         await fade(0.5, 1)
@@ -154,7 +163,7 @@ export const GameScene = ({ canvas }) => {
 
   const finishFloor = async (success: boolean) => {
     score += success ? 1 : 0
-    setTimer(Math.min(99, timer + (success ? 5 : 0)))
+    setTimer(success ? 5 : 0)
 
     background.updateButtons(getFloorButtons(floor))
     await togglePan(true)
@@ -212,7 +221,7 @@ export const GameScene = ({ canvas }) => {
     if (phase === 3) {
       phase = 0
       floor = 1
-      setTimer(START_TIME)
+      setTimer(START_TIME, true)
       onFadeMenu()
       startFloor(true)
       playSound('click')
