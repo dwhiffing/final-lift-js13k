@@ -93,6 +93,7 @@ export const GameScene = ({ canvas }) => {
   const updateTimer = async () => {
     if (phase === 1 && timer > 0) {
       setTimer(timer - 1)
+      playSound('click')
       if (timer === 0) {
         await startTimer(1000)
         await fade(0.5, 1)
