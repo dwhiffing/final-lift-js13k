@@ -135,7 +135,6 @@ export const GameScene = ({ canvas }) => {
 
   const startFloor = async (intro = false) => {
     if (intro) {
-      background.shadow.colors = [`#00000000`]
       await fade(baseAlpha, 0.5)
       background.puzzle.nextPuzzle(difficulty, floor)
     } else {
@@ -153,7 +152,6 @@ export const GameScene = ({ canvas }) => {
     }
     if (floor === 13) {
       background.puzzle.setText('')
-      background.shadow.colors = [`#000000ff`]
     }
     background.toggleDoor(0)
     await moveCamera({ zoom: 2, duration: BASE_DURATION * 2 })
