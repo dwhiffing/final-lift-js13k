@@ -63,7 +63,8 @@ export const GameScene = ({ canvas }) => {
   let floor = 0,
     phase = 4,
     score = 0,
-    timer = 0
+    timer = 0,
+    difficulty = 0
 
   const moveCamera = async (p: {
     zoom?: number
@@ -125,8 +126,6 @@ export const GameScene = ({ canvas }) => {
   }
 
   const startFloor = async (intro = false) => {
-    // const difficulty = 5
-    const difficulty = Math.min(9, Math.ceil(1 + score / 3))
     if (intro) {
       background.shadow.colors = [`#00000000`]
       await fade(baseAlpha, 0.5)
@@ -218,6 +217,13 @@ export const GameScene = ({ canvas }) => {
     window.__disableClick = false
   })
 
+  const updateDifficulty = () => {
+    difficulty = background.timer.difficulty = Math.min(
+      9,
+      1 + Math.ceil(score / 3),
+    )
+  }
+
   onPointer('up', (e) => {
     window.__pointerDown = false
 
@@ -231,6 +237,8 @@ export const GameScene = ({ canvas }) => {
     if (phase === 4) {
       phase = 0
       floor = 1
+      score = 0
+      updateDifficulty()
       setTimer(START_TIME, true)
       onFadeMenu()
       startFloor(true)
