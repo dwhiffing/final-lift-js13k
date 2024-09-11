@@ -5,6 +5,7 @@ import { startTimer } from '../utils/startTimer'
 import { floatToHex } from '../utils/floatToHex'
 import {
   BASE_DURATION,
+  FLOORS_PER_DIFFICULTY,
   getFloorButtons,
   lerpQuad,
   playSound,
@@ -220,7 +221,7 @@ export const GameScene = ({ canvas }) => {
   const updateDifficulty = () => {
     difficulty = background.timer.difficulty = Math.min(
       9,
-      1 + Math.ceil(score / 3),
+      1 + Math.ceil(score / FLOORS_PER_DIFFICULTY),
     )
   }
 

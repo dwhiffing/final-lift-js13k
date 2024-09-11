@@ -1,5 +1,6 @@
 export const BASE_DURATION = 500
 export const TIME_SCALE = 1
+export const FLOORS_PER_DIFFICULTY = 3
 export const MUSIC_DISABLED = true
 export const START_TIME = 60
 
