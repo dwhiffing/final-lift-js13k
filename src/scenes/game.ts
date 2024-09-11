@@ -1,7 +1,7 @@
 import { getContext, on, onPointer, Text } from 'kontra'
 import { Path } from '../entities/Path'
 import { Background } from '../entities/bg'
-import { startTimer } from '../utils/startTimer'
+import { delayedCall } from '../utils/delayedCall'
 import { floatToHex } from '../utils/floatToHex'
 import {
   BASE_DURATION,
@@ -25,7 +25,7 @@ export let camera = {
   shake: async (m: number, f: number, duration: number) => {
     camera.m = m
     camera.f = f
-    await startTimer(duration)
+    await delayedCall(duration)
     camera.m = camera.f = camera.sy = camera.sx = 0
   },
 }
@@ -74,7 +74,7 @@ export const GameScene = ({ canvas }) => {
   }) => {
     const z = camera.zoom
     const x = camera.x
-    await startTimer(p.duration ?? BASE_DURATION, (progress) => {
+    await delayedCall(p.duration ?? BASE_DURATION, (progress) => {
       if (typeof p.zoom === 'number')
         camera.zoom = lerpQuad(z, p.zoom, progress)
       if (typeof p.x === 'number') camera.x = lerpQuad(x, p.x, progress)
@@ -83,7 +83,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   const fade = async (start = 0, end = 1, duration = BASE_DURATION * 2) => {
-    await startTimer(duration, (progress) => {
+    await delayedCall(duration, (progress) => {
       shadow.colors = [`#000000${floatToHex(lerpQuad(start, end, progress))}`]
     })
   }
@@ -99,7 +99,7 @@ export const GameScene = ({ canvas }) => {
       timer = Math.min(99, timer + diff)
       background.timer.setText(`${timer}`)
       playSound('click')
-      await startTimer(100)
+      await delayedCall(100)
     }
   }
   const updateTimer = async () => {
@@ -111,7 +111,7 @@ export const GameScene = ({ canvas }) => {
         onGameover()
       }
     }
-    await startTimer(1000)
+    await delayedCall(1000)
     updateTimer()
   }
   updateTimer()
@@ -135,14 +135,14 @@ export const GameScene = ({ canvas }) => {
       background.updateButtons([])
       await moveCamera({ zoom: 1.05, x: 0 })
       await background.toggleDoor(1)
-      await startTimer(500)
+      await delayedCall(500)
       background.puzzle.nextPuzzle(difficulty, floor)
     }
-    await startTimer(intro ? 500 : 250)
+    await delayedCall(intro ? 500 : 250)
     if (!intro) {
       playSound('elevator')
       await camera.shake(2.75, 4, 1200)
-      await startTimer(500)
+      await delayedCall(500)
     }
     if (floor === 13) {
       background.puzzle.setText('')
@@ -151,7 +151,7 @@ export const GameScene = ({ canvas }) => {
     background.toggleDoor(0)
     await moveCamera({ zoom: 2, duration: BASE_DURATION * 2 })
     if (floor === 13) {
-      await startTimer(1000)
+      await delayedCall(1000)
       await fade(0, 1, 0)
       return onGameover()
     }
@@ -178,7 +178,7 @@ export const GameScene = ({ canvas }) => {
     phase = 3
 
     playSound('gameover')
-    await startTimer(1000)
+    await delayedCall(1000)
     background.updateButtons([])
     await moveCamera({ zoom: 1.05, x: 0, duration: 0 })
 
@@ -190,7 +190,7 @@ export const GameScene = ({ canvas }) => {
   }
 
   const onFadeMenu = (start = 1, end = 0) =>
-    startTimer(1000, (progress: number) => {
+    delayedCall(1000, (progress: number) => {
       startText.color =
         titleText.color = `#ffffff${floatToHex(lerpQuad(start, end, progress))}`
     })
@@ -206,14 +206,14 @@ export const GameScene = ({ canvas }) => {
     if (phase === 1) {
       if (isCorrect) {
         phase = 2
-        await startTimer(BASE_DURATION * 2)
+        await delayedCall(BASE_DURATION * 2)
         await finishFloor()
       } else {
         setTimer(-3)
       }
     } else {
       floor += +buttonText
-      await startTimer(BASE_DURATION * 2)
+      await delayedCall(BASE_DURATION * 2)
       await startFloor()
     }
     window.__disableClick = false

@@ -1,5 +1,5 @@
 import { emit, getCanvas, SpriteClass, Text, track } from 'kontra'
-import { startTimer } from '../utils/startTimer'
+import { delayedCall } from '../utils/delayedCall'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 import { BASE_DURATION, playSound } from '../utils'
@@ -121,7 +121,7 @@ export class Button extends SpriteClass {
       )
       this.state = this.isCorrect ? 2 : 3
       emit('press', this.textNode.text)
-      startTimer(BASE_DURATION * 2).then(() => {
+      delayedCall(BASE_DURATION * 2).then(() => {
         this.state = 0
       })
     }

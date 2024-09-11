@@ -1,6 +1,6 @@
-import { TIME_SCALE } from '../utils'
+import { TIME_SCALE } from '.'
 
-export function startTimer(_duration, onProgress?) {
+export function delayedCall(_duration, onProgress?) {
   const duration = _duration / TIME_SCALE
   let startTime = 0
   let pausedTime = 0
