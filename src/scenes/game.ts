@@ -109,7 +109,17 @@ export const GameScene = ({ canvas }) => {
       await delayedCall(100)
     }
   }
+
+  // const flicker = async () => {
+  //   if (phase === Phase.MENU) return
+  //   fade(0.5, 0.7, 0)
+  //   await delayedCall(randInt(100, 500))
+  //   fade(0.7, 0.5, 0)
+  //   if (randInt(0, 3) === 0) flicker()
+  // }
   const updateTimer = async () => {
+    // if (randInt(0, 6) === 0) flicker()
+
     if (phase === Phase.SOLVE_PUZZLE || phase === Phase.CHOOSE_FLOOR) {
       setTimer(-1)
       if (timer <= 0) {
