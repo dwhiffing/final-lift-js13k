@@ -10,7 +10,9 @@ export const Timer = () => {
   let difficulty = 1
   const context = getContext()
   return {
-    difficulty,
+    setDifficulty(v) {
+      difficulty = v
+    },
     onResize(x, y, width, height) {
       screen.x = x
       screen.y = y
@@ -25,11 +27,11 @@ export const Timer = () => {
     render() {
       screen.render()
       screenText.render()
-      for (let i = 0; i < 10; i++) {
-        context.fillStyle = i >= difficulty ? '#440000' : '#ff0000'
+      for (let i = 0; i < 9; i++) {
+        context.fillStyle = i >= difficulty ? '#400' : '#c00'
         context.beginPath()
         context.arc(
-          5.5 + screen.x + i * 4.2,
+          5.5 + screen.x + i * 4.6,
           screen.y + screen.height - 3,
           1,
           0,

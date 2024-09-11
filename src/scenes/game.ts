@@ -169,6 +169,7 @@ export const GameScene = ({ canvas }) => {
     // TODO: change score/time based on difficulty
     score += 1
     setTimer(5)
+    updateDifficulty()
 
     background.updateButtons(getFloorButtons(floor))
     await togglePan(true)
@@ -199,6 +200,8 @@ export const GameScene = ({ canvas }) => {
   fade(1, baseAlpha, 0)
 
   on('press', async (buttonText) => {
+    if (phase !== 1 && phase !== 2) return
+
     window.__disableClick = true
     const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
     if (!isCorrect && phase === 1) camera.shake(7, 1, BASE_DURATION / 2)
@@ -219,10 +222,8 @@ export const GameScene = ({ canvas }) => {
   })
 
   const updateDifficulty = () => {
-    difficulty = background.timer.difficulty = Math.min(
-      9,
-      1 + Math.ceil(score / FLOORS_PER_DIFFICULTY),
-    )
+    difficulty = Math.min(9, 1 + Math.ceil(score / FLOORS_PER_DIFFICULTY))
+    background.timer.setDifficulty(difficulty)
   }
 
   onPointer('up', (e) => {
