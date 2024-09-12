@@ -160,7 +160,7 @@ export const GameScene = ({ canvas }) => {
     await delayedCall(intro ? 500 : 250)
     if (!intro) {
       playSound('elevator')
-      await camera.shake(2.75, 4, 1200)
+      await camera.shake(2, 4, 1200)
       await delayedCall(500)
     }
     if (floor === 13) {
