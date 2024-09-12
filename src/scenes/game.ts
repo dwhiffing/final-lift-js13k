@@ -188,7 +188,7 @@ export const GameScene = ({ canvas }) => {
     setTimer(5)
     updateDifficulty()
 
-    background.updateButtons(getFloorButtons(floor))
+    background.updateButtons(getFloorButtons(floor, difficulty))
     await togglePan(true)
   }
 

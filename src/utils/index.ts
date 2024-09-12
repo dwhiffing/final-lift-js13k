@@ -1,3 +1,5 @@
+import { genArray } from '../entities/Puzzle'
+
 export const BASE_DURATION = 500
 export let TIME_SCALE = 1
 export const setTimeScale = (v: number) => (TIME_SCALE = v)
@@ -63,23 +65,28 @@ export function lerpQuad(start, end, t) {
   return (1 - easedT) * start + easedT * end
 }
 
-export const getFloorButtons = (floor: number) => {
+export const getFloorButtons = (floor: number, difficulty: number) => {
   const count = 3
 
   let numbers: number[] = []
   const isValid = (n, i, a) =>
     floor + n >= minFloor && floor + n <= maxFloor && a.indexOf(n) === i
   while (numbers.length < count) {
-    numbers.push(getFloorButton(floor))
+    numbers.push(getFloorButton(floor, difficulty))
     numbers = numbers.filter(isValid)
   }
   return shuffle(numbers.map((n) => `${n > 0 ? '+' : ''}${n}`))
 }
 
-const getFloorButton = (floor: number) => {
+const getFloorButton = (floor: number, difficulty: number) => {
+  const hd = Math.floor(difficulty / 2)
   const deadly = 13 - floor
-  const options = [0, 1]
-  if (deadly <= 6) options.push(2)
+  const options = [
+    ...genArray(6 - hd).fill(0),
+    ...genArray(hd).fill(1),
+    ...genArray(deadly <= 6 ? hd : 0).fill(2),
+  ]
+
   const type = sample(options)
   const factor = floor > maxFloor - 9 ? 0 : floor < 9 ? 1 : 0.5
   const negative = type !== 2 ? Math.random() >= factor : false
@@ -97,6 +104,7 @@ const getFloorButton = (floor: number) => {
 
   return negative ? number * -1 : number
 }
+
 export function randInt(min, max) {
   return ((Math.random() * (max - min + 1)) | 0) + min
 }
