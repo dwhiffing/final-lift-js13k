@@ -11,6 +11,7 @@ export const Puzzle = () => {
   const setText = (s = '', color = '#fff') => {
     text.text = s
     text.color = color
+    text.y = height * 0.5
   }
 
   const nextPuzzle = (difficulty = 1, floor = 1) => {
@@ -96,9 +97,13 @@ const generateEmojiPuzzle = (difficulty = 1) => {
     correctAnswer,
   }
 }
-const placeText = (emojiCounts, x, y) => {
+const placeText = (emojiCounts: Record<string, number>, x, y) => {
   const texts = []
   let j = 0
+  const total = Math.floor(
+    Object.values(emojiCounts).reduce((sum, n) => sum + n) / 5,
+  )
+  const offset = ((7 - total) / 2) * 26
   Object.entries(emojiCounts).forEach(([emoji, count]) => {
     for (let i = 0; i < count; i++) {
       texts.push(
@@ -106,7 +111,7 @@ const placeText = (emojiCounts, x, y) => {
           text: emoji,
           font: '24px Arial',
           x: x + (j % 5) * 26,
-          y: y + Math.floor(j / 5) * 26,
+          y: offset + y + Math.floor(j / 5) * 26,
         }),
       )
       j++
