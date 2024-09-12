@@ -136,18 +136,16 @@ const generateWordPuzzle = (difficulty = 1) => {
 }
 
 const generateRatioPuzzle = (difficulty = 1) => {
-  const [amount1, ratio] = [
-    difficulty * randInt(1, 4),
-    difficulty * randInt(2, 5),
-  ]
-  const coins1 = amount1 * ratio
-  const fruit = shuffle(FRUITS)[0]
-  const amount2 = difficulty * randInt(3, 6)
-  const correctAnswer = Math.round((coins1 / amount1) * amount2)
+  const base = difficulty * 2
+  const [amount1, ratio] = [base + randInt(0, 3), base + randInt(0, 5)]
+  const cost = amount1 * ratio
+  const fruit = sample(FRUITS)
+  const amount2 = ratio + randInt(2, 4) * (randInt(0, 1) === 0 ? 1 : -1)
+  const correctAnswer = Math.round((cost / amount1) * amount2)
 
   return {
-    text: `${amount1} ${fruit}s cost $${coins1}. How much for ${amount2}?`,
-    options: generateOptions(correctAnswer, difficulty, 3),
+    text: `${amount1} ${fruit}s cost $${cost}. How much for ${amount2}?`,
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
   }
 }
