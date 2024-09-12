@@ -102,7 +102,7 @@ const generateLetterPuzzle = (difficulty = 1) => {
     text: `Which are there ${askForMost ? 'most' : 'fewest'} of?`,
     options: shuffle(Object.keys(counts)),
     correctAnswer,
-    reward: BASE_REWARD,
+    reward: BASE_REWARD + difficulty,
   }
 }
 const placeText = (letterCounts: Record<string, number>, x, y) => {
@@ -150,7 +150,7 @@ const generateWordPuzzle = (difficulty = 1) => {
     text: `${shuffle(shuffledWords).join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
     options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
-    reward: BASE_REWARD + 1,
+    reward: BASE_REWARD + 1 + difficulty,
   }
 }
 
@@ -187,7 +187,7 @@ const generateSequencePuzzle = (difficulty = 1) => {
     text: sequence.concat('_').join(', '),
     options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
-    reward: BASE_REWARD,
+    reward: BASE_REWARD + difficulty,
   }
 }
 
@@ -208,7 +208,7 @@ const generateSpeedPuzzle = (difficulty = 1) => {
     text: `Press from ${largestFirst ? 'largest' : 'smallest'} to ${!largestFirst ? 'largest' : 'smallest'}`,
     options: shuffle(options),
     correctAnswer: sortedOptions,
-    reward: BASE_REWARD,
+    reward: BASE_REWARD + difficulty,
   }
 }
 
@@ -227,7 +227,7 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
     text: 'What floor are you on?',
     options: options,
     correctAnswer: floor,
-    reward: BASE_REWARD,
+    reward: BASE_REWARD + difficulty,
   }
 }
 
@@ -257,7 +257,7 @@ const generateEquationPuzzle = (difficulty = 1) => {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
     options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
     correctAnswer: eq[missingIndex],
-    reward: BASE_REWARD + 1,
+    reward: BASE_REWARD + 1 + difficulty,
   }
 }
 
