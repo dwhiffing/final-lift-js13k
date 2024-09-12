@@ -21,10 +21,10 @@ export const Puzzle = () => {
         generateWordPuzzle, // 170
         generateRatioPuzzle, // 73
         generateEquationPuzzle, // 240
-        generateFloorPuzzle, // 75
         generateSequencePuzzle, // 70
         generateSpeedPuzzle,
       ])
+      puzzleQueue.push(generateFloorPuzzle)
     }
 
     const generator = puzzleQueue.shift()
