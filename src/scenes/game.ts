@@ -110,7 +110,8 @@ export const GameScene = ({ canvas }) => {
       value += diff * -1
       timer = Math.min(99, timer + diff)
       background.timer.setText(`${timer}`)
-      const sound = diff < 0 && timer < 10 ? 'tickUrgent' : 'tick'
+      const sound =
+        diff > 0 ? 'tick2' : diff < 0 && timer < 10 ? 'tickUrgent' : 'tick'
       playSound(sound)
       await delayedCall(100)
     }
