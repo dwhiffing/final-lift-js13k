@@ -165,9 +165,9 @@ const generateRatioPuzzle = (difficulty = 1) => {
 
   return {
     text: `${amount1} ${fruit}s cost $${cost}. How much for ${amount2}?`,
-    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 1),
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
-    reward: BASE_REWARD + 3,
+    reward: BASE_REWARD + 4 + difficulty,
   }
 }
 
