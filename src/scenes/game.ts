@@ -11,6 +11,7 @@ import {
   playSound,
   setTimeScale,
   START_TIME,
+  toggleMute,
 } from '../utils'
 
 enum Phase {
@@ -47,10 +48,8 @@ export let camera = {
 let a = document.getElementsByTagName('a')[0],
   baseAlpha = 0.75
 a.onclick = () => {
-  console.log('wtf')
+  toggleMute()
   a.innerHTML = a.innerHTML === 'mute' ? 'unmute' : 'mute'
-  // @ts-ignore
-  zzfxV = zzfxV ? 0 : 0.3
 }
 
 export const GameScene = ({ canvas }) => {
