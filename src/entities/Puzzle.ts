@@ -227,8 +227,8 @@ const generateEquationPuzzle = (difficulty = 1) => {
 
   let eq = []
   while (numbers.length) {
-    eq.push(numbers.pop())
-    if (ops.length) eq.push(ops.pop())
+    eq.push(numbers.shift())
+    if (ops.length) eq.push(ops.shift())
   }
 
   eq = eq.concat(['=', `${result}`])
