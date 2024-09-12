@@ -193,7 +193,15 @@ const generateSequencePuzzle = (difficulty = 1) => {
 
 const generateSpeedPuzzle = (difficulty = 1) => {
   const largestFirst = Math.random() > 0.5
-  const options = genArray(difficulty + 2).map((_, i) => i + 1)
+  const hd = clamp(0, 2, Math.ceil(difficulty / 3) - 1)
+  let acc = 1
+  const options = genArray(difficulty + 3)
+    .map((_, i) => {
+      let result = i + acc
+      acc += randInt(0, hd)
+      return result
+    })
+    .slice(0, 12)
   const sortedOptions = options.sort((a, b) => (largestFirst ? b - a : a - b))
 
   return {
