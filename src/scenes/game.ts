@@ -12,7 +12,6 @@ import {
   setTimeScale,
   START_TIME,
 } from '../utils'
-import MUSIC from '../music'
 
 enum Phase {
   TIME_PAUSED = 0,
@@ -268,13 +267,6 @@ export const GameScene = ({ canvas }) => {
 
   onPointer('up', (e) => {
     window.__pointerDown = false
-
-    if (!music) {
-      // console.log(MUSIC.length)
-      // @ts-ignore
-      // music = zzfxP(...zzfxM(...MUSIC))
-      // music.loop = true
-    }
 
     if (phase === Phase.MENU) {
       phase = Phase.TIME_PAUSED
