@@ -261,7 +261,7 @@ export const GameScene = ({ canvas }) => {
 
   const updateDifficulty = () => {
     difficulty = Math.min(9, 1 + Math.floor(score / FLOORS_PER_DIFFICULTY))
-    setTimeScale(1 + (difficulty - 1) / 9)
+    setTimeScale(1 + (difficulty - 1) / 18)
     background.timer.setDifficulty(difficulty)
   }
 
