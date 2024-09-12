@@ -1,5 +1,5 @@
-import { getCanvas, Text } from 'kontra'
-import { shuffle, randInt } from '../utils'
+import { clamp, getCanvas, Text } from 'kontra'
+import { shuffle, randInt, sample } from '../utils'
 
 let puzzleQueue = []
 export const Puzzle = () => {
@@ -67,7 +67,7 @@ const generateEmojiPuzzle = (difficulty = 1) => {
   const emojis = FRUIT_EMOJI.slice(0, difficulty + 1)
   const counts = emojis.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {})
 
-  for (let i = 0; i < 20 + difficulty * 5; i++) counts[shuffle(emojis)[0]]++
+  for (let i = 0; i < 20 + difficulty * 5; i++) counts[sample(emojis)]++
   const correctAnswer = Object.keys(counts).reduce((a, b) =>
     counts[a] > counts[b] ? a : b,
   )
@@ -153,16 +153,21 @@ const generateRatioPuzzle = (difficulty = 1) => {
 }
 
 const generateSequencePuzzle = (difficulty = 1) => {
-  let [start, step] = [randInt(1, 10), randInt(1, 5)]
-  const op = shuffle(['+', '*'].slice(0, difficulty))[0]
-  const sequence = Array(4)
+  const op = ['+', '*'][clamp(0, 1, Math.floor(difficulty / 7))]
+  const maxStep = op === '*' ? 4 : 15
+  let [start, step] = [
+    randInt(difficulty, 4 + difficulty),
+    randInt(2, clamp(4, maxStep, 2 + difficulty)),
+  ]
+  let initial = start
+  const sequence = Array(3)
     .fill(0)
     .map(() => (op === '+' ? (start += step) : (start *= step)))
-
+  sequence.unshift(initial)
   const correctAnswer = sequence.pop()
   return {
     text: sequence.concat('_').join(', '),
-    options: generateOptions(correctAnswer, difficulty, 3),
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
   }
 }
@@ -190,13 +195,12 @@ const generateEquationPuzzle = (difficulty = 1) => {
   const mod = 1 + ((difficulty - 1) % 3)
   const availableOps = ['+', '-', '*'].slice(0, mod)
   const ops = genArray(div)
-    .map((_, i) => (i === 0 ? availableOps[mod - 1] : shuffle(availableOps)[0]))
+    .map((_, i) => (i === 0 ? availableOps[mod - 1] : sample(availableOps)))
     .sort((a, b) => (a === '*' ? -1 : b === '*' ? 1 : 0))
   const numbers = genArray(div + 1).map(() => randInt(1, div * 3))
   const result = Math.floor(
     numbers.reduce(
-      (a, b, i) =>
-        ({ '+': a + b, '-': a - b, '*': a * b, '/': a / b })[ops[i - 1]],
+      (a, b, i) => ({ '+': a + b, '-': a - b, '*': a * b })[ops[i - 1]],
     ),
   )
 
@@ -207,9 +211,7 @@ const generateEquationPuzzle = (difficulty = 1) => {
   }
 
   eq = eq.concat(['=', `${result}`])
-  const missingIndex = shuffle(
-    eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])),
-  )[0]
+  const missingIndex = sample(eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])))
   return {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
     options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
@@ -225,7 +227,7 @@ const generateOptions = (correctAnswer, errorRange, optionCount) => {
     if (!options.includes(wrongAnswer) && wrongAnswer > 0)
       options.push(wrongAnswer)
   }
-  return shuffle(options)
+  return shuffle(options.slice(0, 9))
 }
 
 const genArray = (s: number) => new Array(s).fill('')

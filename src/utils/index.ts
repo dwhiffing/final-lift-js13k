@@ -31,6 +31,8 @@ export const playSound = (key) => {
 
 export const toggleMute = () => (muted = !muted)
 
+export const sample = (array) => shuffle(array)[0]
+
 export function shuffle(array) {
   const cloned = [...array]
   for (var i = array.length - 1; i > 0; i--) {
@@ -73,16 +75,16 @@ const getFloorButton = (floor: number) => {
   const deadly = 13 - floor
   const options = [0, 1]
   if (deadly <= 6) options.push(2)
-  const type = shuffle(options)[0]
+  const type = sample(options)
   const factor = floor > maxFloor - 9 ? 0 : floor < 9 ? 1 : 0.5
   const negative = type !== 2 ? Math.random() >= factor : false
   let number = 0
   if (type === 0) {
     // low
-    number = shuffle([1, 2, 3])[0]
+    number = sample([1, 2, 3])
   } else if (type === 1) {
     // high
-    number = shuffle([4, 5, 6, 7])[0]
+    number = sample([4, 5, 6, 7])
   } else if (type === 2) {
     // deadly
     number = deadly
