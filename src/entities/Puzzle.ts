@@ -22,6 +22,7 @@ export const Puzzle = () => {
         generateEquationPuzzle, // 240
         generateFloorPuzzle, // 75
         generateSequencePuzzle, // 70
+        generateSpeedPuzzle,
       ])
     }
 
@@ -29,7 +30,9 @@ export const Puzzle = () => {
 
     const puzzle = generator(difficulty, floor)
     options = puzzle.options.map(String)
-    correctAnswer = `${puzzle.correctAnswer}`
+    correctAnswer = Array.isArray(puzzle.correctAnswer)
+      ? puzzle.correctAnswer.map(String)
+      : [`${puzzle.correctAnswer}`]
     setText(puzzle.text)
 
     emojiTexts =
@@ -170,6 +173,18 @@ const generateSequencePuzzle = (difficulty = 1) => {
     text: sequence.concat('_').join(', '),
     options: generateOptions(correctAnswer, difficulty),
     correctAnswer: correctAnswer,
+  }
+}
+
+const generateSpeedPuzzle = (difficulty = 1) => {
+  const largestFirst = Math.random() > 0.5
+  const options = genArray(difficulty + 2).map((_, i) => i + 1)
+  const sortedOptions = options.sort((a, b) => (largestFirst ? b - a : a - b))
+
+  return {
+    text: `Press from ${largestFirst ? 'largest' : 'smallest'} to ${!largestFirst ? 'largest' : 'smallest'}`,
+    options: shuffle(options),
+    correctAnswer: sortedOptions,
   }
 }
 

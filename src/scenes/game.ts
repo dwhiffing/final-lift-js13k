@@ -73,6 +73,7 @@ export const GameScene = ({ canvas }) => {
     phase = Phase.MENU,
     score = 0,
     timer = 0,
+    answerIndex = 0,
     difficulty = 0
 
   const moveCamera = async (p: {
@@ -172,9 +173,10 @@ export const GameScene = ({ canvas }) => {
       return onGameover()
     }
 
+    answerIndex = 0
     background.updateButtons(
       background.puzzle.getOptions(),
-      background.puzzle.getCorrectAnswer(),
+      background.puzzle.getCorrectAnswer()[answerIndex],
     )
     phase = Phase.SOLVE_PUZZLE
   }
@@ -217,16 +219,27 @@ export const GameScene = ({ canvas }) => {
     if (phase !== Phase.SOLVE_PUZZLE && phase !== Phase.CHOOSE_FLOOR) return
 
     window.__disableClick = true
-    const isCorrect = buttonText === background.puzzle.getCorrectAnswer()
-    if (!isCorrect && phase === Phase.SOLVE_PUZZLE)
+    const correctAnswers = background.puzzle.getCorrectAnswer()
+    const correctAnswer = correctAnswers[answerIndex]
+    const isCorrect = buttonText === correctAnswer
+    const isFinalAnswer = answerIndex === correctAnswers.length - 1
+    if (!isCorrect && phase === Phase.SOLVE_PUZZLE) {
+      setTimer(-3)
       camera.shake(7, 1, BASE_DURATION / 2)
+    }
+
     if (phase === Phase.SOLVE_PUZZLE) {
       if (isCorrect) {
-        phase = Phase.CHOOSE_FLOOR
-        await delayedCall(BASE_DURATION)
-        await finishFloor()
-      } else {
-        setTimer(-3)
+        if (isFinalAnswer) {
+          phase = Phase.CHOOSE_FLOOR
+          await delayedCall(BASE_DURATION)
+          await finishFloor()
+        } else {
+          background.updateButtons(
+            background.puzzle.getOptions(),
+            correctAnswers[++answerIndex],
+          )
+        }
       }
     } else {
       floor += +buttonText
