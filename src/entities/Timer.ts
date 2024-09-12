@@ -19,7 +19,7 @@ export const Timer = () => {
       screen.width = width
       screen.height = height
       screenText.x = x + width / 2
-      screenText.y = y + height / 2
+      screenText.y = y + height / 2 + (window.safari ? -2 : 0)
     },
     setText(text) {
       screenText.text = text

@@ -6,7 +6,7 @@ export const Puzzle = () => {
   const { width, height } = getCanvas()
   let options: string[] = [],
     correctAnswer = '-1',
-    emojiTexts = []
+    texts = []
 
   const setText = (s = '', color = '#fff') => {
     text.text = s
@@ -17,7 +17,7 @@ export const Puzzle = () => {
   const nextPuzzle = (difficulty = 1, floor = 1) => {
     if (puzzleQueue.length === 0) {
       puzzleQueue = shuffle([
-        generateEmojiPuzzle, // 140
+        generateLetterPuzzle, // 140
         generateWordPuzzle, // 170
         generateRatioPuzzle, // 73
         generateEquationPuzzle, // 240
@@ -36,12 +36,12 @@ export const Puzzle = () => {
       : [`${puzzle.correctAnswer}`]
     setText(puzzle.text)
 
-    emojiTexts =
-      puzzle.emojiCounts && floor != 13
-        ? placeText(puzzle.emojiCounts, width / 2 - 50, height * 0.32)
+    texts =
+      puzzle.letterCounts && floor != 13
+        ? placeText(puzzle.letterCounts, width / 2 - 50, height * 0.32)
         : []
 
-    text.y = puzzle.emojiCounts ? height * 0.65 : height * 0.5
+    text.y = puzzle.letterCounts ? height * 0.65 : height * 0.5
   }
 
   const text = Text({
@@ -60,22 +60,22 @@ export const Puzzle = () => {
     getOptions: () => options,
     render() {
       text.render()
-      emojiTexts.forEach((t) => t.render())
+      texts.forEach((t) => t.render())
     },
   }
 }
 
-export const FRUIT_EMOJI = ['🍎', '🍌', '🍇', '🍓', '🍑']
-const generateEmojiPuzzle = (difficulty = 1) => {
-  const emojis = shuffle(FRUIT_EMOJI).slice(0, 1 + Math.ceil(difficulty / 3))
+export const LETTERS = ['A', 'B', 'C', 'D', 'E']
+const generateLetterPuzzle = (difficulty = 1) => {
+  const letters = shuffle(LETTERS).slice(0, 1 + Math.ceil(difficulty / 2))
   const total = clamp(6, 35, difficulty * 4)
-  const uniqueCounts = Array.from({ length: emojis.length }, (_, i) => i)
+  const uniqueCounts = Array.from({ length: letters.length }, (_, i) => i)
   const sum = uniqueCounts.reduce((sum, n) => sum + n)
-  const base = Math.floor((total - sum) / emojis.length)
+  const base = Math.floor((total - sum) / letters.length)
   const scaledCounts = uniqueCounts.map((_, i) => i + base)
   const shuffledCounts = shuffle(scaledCounts)
-  const counts = emojis.reduce(
-    (acc, emoji, index) => ({ ...acc, [emoji]: shuffledCounts[index] }),
+  const counts = letters.reduce(
+    (acc, letter, index) => ({ ...acc, [letter]: shuffledCounts[index] }),
     {},
   )
 
@@ -91,24 +91,24 @@ const generateEmojiPuzzle = (difficulty = 1) => {
   )
 
   return {
-    emojiCounts: counts,
+    letterCounts: counts,
     text: `Which are there ${askForMost ? 'most' : 'fewest'} of?`,
     options: shuffle(Object.keys(counts)),
     correctAnswer,
   }
 }
-const placeText = (emojiCounts: Record<string, number>, x, y) => {
+const placeText = (letterCounts: Record<string, number>, x, y) => {
   const texts = []
   let j = 0
   const total = Math.floor(
-    Object.values(emojiCounts).reduce((sum, n) => sum + n) / 5,
+    Object.values(letterCounts).reduce((sum, n) => sum + n) / 5,
   )
   const offset = ((7 - total) / 2) * 26
-  Object.entries(emojiCounts).forEach(([emoji, count]) => {
+  Object.entries(letterCounts).forEach(([letter, count]) => {
     for (let i = 0; i < count; i++) {
       texts.push(
         Text({
-          text: emoji,
+          text: letter,
           font: '24px Arial',
           x: x + (j % 5) * 26,
           y: offset + y + Math.floor(j / 5) * 26,

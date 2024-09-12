@@ -58,13 +58,13 @@ export const GameScene = ({ canvas }) => {
   const context = getContext(),
     titleText = Text({
       text: 'Final\nLift',
-      font: '84px sans-serif',
+      font: '84px Arial',
       x: canvas.width / 2,
       y: canvas.height * 0.4,
     }),
     startText = Text({
       text: 'Press to start',
-      font: '32px sans-serif',
+      font: '32px Arial',
       x: canvas.width / 2,
       y: canvas.height * 0.85,
     })
@@ -263,7 +263,7 @@ export const GameScene = ({ canvas }) => {
     window.__pointerDown = false
 
     if (!music) {
-      console.log(MUSIC.length)
+      // console.log(MUSIC.length)
       // @ts-ignore
       // music = zzfxP(...zzfxM(...MUSIC))
       // music.loop = true

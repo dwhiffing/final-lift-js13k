@@ -1,4 +1,4 @@
-import { init, initPointer, GameLoop, clamp } from 'kontra'
+import { init, initPointer, GameLoop } from 'kontra'
 import { GameScene } from './scenes/game'
 import './zzfx'
 
@@ -7,10 +7,13 @@ declare global {
     __pointerDown: boolean
     __focused: boolean
     __disableClick: boolean
+    safari: boolean
     zzfxV: number
   }
 }
 const { canvas } = init()
+
+window.safari = window.safari || /iPhone|iPad|iPod/.test(navigator.userAgent)
 
 initPointer()
 

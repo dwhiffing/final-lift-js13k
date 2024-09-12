@@ -3,7 +3,6 @@ import { delayedCall } from '../utils/delayedCall'
 import { camera } from '../scenes/game'
 import { createGlow } from '../utils/glow'
 import { BASE_DURATION, playSound } from '../utils'
-import { FRUIT_EMOJI } from './Puzzle'
 
 export class Button extends SpriteClass {
   init({ disabled = true, ...props } = {}) {
@@ -55,9 +54,8 @@ export class Button extends SpriteClass {
 
     this.textNode = Text({
       text: '',
-      font: '7px Arial, sans-serif',
-      width: 5,
-      anchor: { x: 0, y: 0.55 },
+      font: '7.5px Arial',
+      anchor: { x: 0, y: window.safari ? 0.85 : 0.65 },
       context: this.context,
     })
 
@@ -70,22 +68,11 @@ export class Button extends SpriteClass {
 
   _p() {
     this.textNode._p()
-
-    let width = this.textNode.width + 5 * 2
-    let height = this.textNode.height + 5 * 2
-
-    this.width = Math.max(width, this.width)
-    this.height = Math.max(height, this.height)
     this._uw()
   }
 
   render() {
     if (this._d) this._p()
-
-    this.textNode.anchor.x = FRUIT_EMOJI.includes(this.textNode.text)
-      ? -0.25
-      : 0
-
     super.render()
   }
 
