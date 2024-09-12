@@ -233,7 +233,7 @@ export const GameScene = ({ canvas }) => {
       if (isCorrect) {
         if (isFinalAnswer) {
           phase = Phase.CHOOSE_FLOOR
-          await delayedCall(BASE_DURATION)
+          await delayedCall(BASE_DURATION * 2)
           await finishFloor()
         } else {
           background.updateButtons(
