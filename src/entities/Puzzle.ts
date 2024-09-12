@@ -172,16 +172,15 @@ const generateRatioPuzzle = (difficulty = 1) => {
 }
 
 const generateSequencePuzzle = (difficulty = 1) => {
-  const op = ['+', '*'][clamp(0, 1, Math.floor(difficulty / 7))]
-  const maxStep = op === '*' ? 4 : 15
+  const hd = Math.floor(difficulty / 2)
   let [start, step] = [
-    randInt(difficulty, 4 + difficulty),
-    randInt(2, clamp(4, maxStep, 2 + difficulty)),
+    difficulty + randInt(hd, 2 + hd),
+    1 + difficulty + randInt(hd, 2 + hd),
   ]
   let initial = start
   const sequence = Array(3)
     .fill(0)
-    .map(() => (op === '+' ? (start += step) : (start *= step)))
+    .map(() => (start += step))
   sequence.unshift(initial)
   const correctAnswer = sequence.pop()
   return {
