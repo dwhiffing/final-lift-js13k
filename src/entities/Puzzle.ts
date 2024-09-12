@@ -130,7 +130,9 @@ const placeText = (letterCounts: Record<string, number>, x, y) => {
 }
 const generateWordPuzzle = (difficulty = 1) => {
   const isLongest = randInt(0, 1)
-  const shuffledWords = FRUITS.slice(0, clamp(2, 5, difficulty + 1))
+  const shuffledWords = shuffle(
+    FRUITS.slice(0, clamp(0, FRUITS.length, difficulty + 1)),
+  ).slice(0, clamp(2, 5, difficulty + 1))
 
   const questionType = randInt(0, 2)
   const countCharacters = (str, regex) => (str.match(regex) || []).length
