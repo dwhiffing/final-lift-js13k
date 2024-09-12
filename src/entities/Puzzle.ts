@@ -140,7 +140,7 @@ const generateWordPuzzle = (difficulty = 1) => {
 
   return {
     text: `${shuffle(shuffledWords).join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
-    options: generateOptions(correctAnswer, difficulty),
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
   }
 }
@@ -156,7 +156,7 @@ const generateRatioPuzzle = (difficulty = 1) => {
 
   return {
     text: `${amount1} ${fruit}s cost $${cost}. How much for ${amount2}?`,
-    options: generateOptions(correctAnswer, difficulty),
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 1),
     correctAnswer: correctAnswer,
   }
 }
@@ -176,7 +176,7 @@ const generateSequencePuzzle = (difficulty = 1) => {
   const correctAnswer = sequence.pop()
   return {
     text: sequence.concat('_').join(', '),
-    options: generateOptions(correctAnswer, difficulty),
+    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
   }
 }
@@ -235,16 +235,13 @@ const generateEquationPuzzle = (difficulty = 1) => {
   const missingIndex = sample(eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])))
   return {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
-    options: generateOptions(eq[missingIndex], difficulty),
+    options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
     correctAnswer: eq[missingIndex],
   }
 }
 
 // Helper function to generate options
-const generateOptions = (correctAnswer, difficulty) => {
-  const errorRange = difficulty * 2
-  const optionCount = difficulty + 2
-
+const generateOptions = (correctAnswer, errorRange, optionCount) => {
   const options = [+correctAnswer]
   while (options.length < optionCount) {
     const wrongAnswer = +correctAnswer + randInt(-errorRange, errorRange)
@@ -254,7 +251,7 @@ const generateOptions = (correctAnswer, difficulty) => {
   return shuffle(options.slice(0, 9))
 }
 
-const genArray = (s: number) => new Array(s).fill('')
+export const genArray = (s: number) => new Array(s).fill('')
 const FRUITS = 'kiwi apple banana apricot mandarin pineapple watermelon'.split(
   ' ',
 )
