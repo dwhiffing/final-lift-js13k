@@ -21,7 +21,7 @@ export class Button extends SpriteClass {
         const focus = this.focused || this.hovered
         const pressed = this.pressed || this.state === 1
         const glowFactor =
-          this.state > 1 ? 5 : this.state === 1 ? 3 : focus ? 2 : 1
+          this.state > 1 ? 5 : this.state === 1 ? 3 : focus ? 2 : 0
         const glowSize = glowFactor * s
 
         const color: [number, number, number] =
@@ -31,7 +31,6 @@ export class Button extends SpriteClass {
               ? [0.6, 1, 0.6]
               : [1, 0.2, 0.2]
 
-        const glow = createGlow(...color, glowSize)
         ctx.beginPath()
         ctx.arc(s / 2, s / 2, s / 2, 0, Math.PI * 2)
         ctx.fillStyle = this.disabled ? '#8885' : pressed ? '#666' : '#888'
@@ -45,7 +44,8 @@ export class Button extends SpriteClass {
         ctx.stroke()
         ctx.restore()
 
-        if (!this.disabled) {
+        if (!this.disabled && glowSize > 0) {
+          const glow = createGlow(...color, glowSize)
           const o = (glowSize - s) / 2
           ctx.drawImage(glow, -o, -o)
         }
@@ -122,6 +122,7 @@ export class Button extends SpriteClass {
       this.state = this.isCorrect ? 2 : 3
       emit('press', this.textNode.text)
       delayedCall(BASE_DURATION * 2).then(() => {
+        this.hovered = false
         this.state = 0
       })
     }
