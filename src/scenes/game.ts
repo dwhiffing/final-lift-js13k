@@ -9,6 +9,7 @@ import {
   getFloorButtons,
   lerpQuad,
   playSound,
+  setTimeScale,
   START_TIME,
 } from '../utils'
 import MUSIC from '../music'
@@ -149,8 +150,8 @@ export const GameScene = ({ canvas }) => {
       background.puzzle.nextPuzzle(difficulty, floor)
     } else {
       background.updateButtons([])
+      background.toggleDoor(1)
       await moveCamera({ zoom: 1.05, x: 0 })
-      await background.toggleDoor(1)
       await delayedCall(500)
       background.puzzle.nextPuzzle(difficulty, floor)
     }
@@ -222,7 +223,7 @@ export const GameScene = ({ canvas }) => {
     if (phase === Phase.SOLVE_PUZZLE) {
       if (isCorrect) {
         phase = Phase.CHOOSE_FLOOR
-        await delayedCall(BASE_DURATION * 2)
+        await delayedCall(BASE_DURATION)
         await finishFloor()
       } else {
         setTimer(-3)
@@ -230,7 +231,6 @@ export const GameScene = ({ canvas }) => {
     } else {
       floor += +buttonText
       phase = Phase.TIME_PAUSED
-      await delayedCall(BASE_DURATION * 2)
       await startFloor()
     }
     window.__disableClick = false
@@ -238,6 +238,7 @@ export const GameScene = ({ canvas }) => {
 
   const updateDifficulty = () => {
     difficulty = Math.min(9, 1 + Math.ceil(score / FLOORS_PER_DIFFICULTY))
+    setTimeScale(1 + (difficulty - 1) / 9)
     background.timer.setDifficulty(difficulty)
   }
 

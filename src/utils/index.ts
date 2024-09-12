@@ -1,6 +1,7 @@
 export const BASE_DURATION = 500
-export const TIME_SCALE = 1
-export const FLOORS_PER_DIFFICULTY = 3
+export let TIME_SCALE = 1
+export const setTimeScale = (v: number) => (TIME_SCALE = v)
+export const FLOORS_PER_DIFFICULTY = 4
 export const MUSIC_DISABLED = true
 export const START_TIME = 60
 
