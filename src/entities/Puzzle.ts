@@ -234,15 +234,11 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
 const generateEquationPuzzle = (difficulty = 1) => {
   const div = Math.ceil(difficulty / 3)
   const mod = 1 + ((difficulty - 1) % 3)
-  const availableOps = ['+', '-', '*'].slice(0, mod)
-  const ops = genArray(div)
-    .map((_, i) => (i === 0 ? availableOps[mod - 1] : sample(availableOps)))
-    .sort((a, b) => (a === '*' ? -1 : b === '*' ? 1 : 0))
+  const availableOps = ['+', '-'].slice(0, 2)
+  const ops = genArray(div).map((_, i) => sample(availableOps))
   const numbers = genArray(div + 1).map(() => randInt(1, div * 3))
   const result = Math.floor(
-    numbers.reduce(
-      (a, b, i) => ({ '+': a + b, '-': a - b, '*': a * b })[ops[i - 1]],
-    ),
+    numbers.reduce((a, b, i) => ({ '+': a + b, '-': a - b })[ops[i - 1]]),
   )
 
   let eq = []
