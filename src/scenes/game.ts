@@ -22,6 +22,12 @@ enum Phase {
   MENU,
 }
 
+const vibrate = (duration: number) => {
+  try {
+    navigator.vibrate(duration)
+  } catch (e) {}
+}
+
 export let camera = {
   zoom: 1.05,
   x: 0,
@@ -197,6 +203,7 @@ export const GameScene = ({ canvas }) => {
     phase = Phase.GAME_OVER
 
     playSound('gameover')
+    vibrate(BASE_DURATION)
     await delayedCall(1000)
     background.updateButtons([])
     await moveCamera({ zoom: 1.05, x: 0, duration: 0 })
@@ -227,7 +234,7 @@ export const GameScene = ({ canvas }) => {
     if (!isCorrect && phase === Phase.SOLVE_PUZZLE) {
       setTimer(-3)
       try {
-        navigator.vibrate(BASE_DURATION / 2)
+        vibrate(BASE_DURATION / 2)
       } catch (e) {}
       camera.shake(7, 1, BASE_DURATION / 2)
     }
