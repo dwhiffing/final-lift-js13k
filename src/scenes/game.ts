@@ -268,7 +268,7 @@ export const GameScene = ({ canvas }) => {
       if (camera.x === 0) {
         playSound('swap')
         togglePan(true)
-      } else if (camera.x === 190 && o < 0.3) {
+      } else if (camera.x === 190 && o < 0.2) {
         playSound('swap')
         togglePan(false)
       }
