@@ -138,11 +138,12 @@ const generateWordPuzzle = (difficulty = 1) => {
 }
 
 const generateRatioPuzzle = (difficulty = 1) => {
-  const base = difficulty * 2
-  const [amount1, ratio] = [base + randInt(0, 3), base + randInt(0, 5)]
+  const mod = 1 + Math.ceil(difficulty / 3)
+  const base = clamp(2, 9, mod)
+  const [amount1, ratio] = [base + randInt(0, 2), base + randInt(1, 3)]
   const cost = amount1 * ratio
   const fruit = sample(FRUITS)
-  const amount2 = ratio + randInt(2, 4) * (randInt(0, 1) === 0 ? 1 : -1)
+  const amount2 = amount1 + randInt(1, mod)
   const correctAnswer = Math.round((cost / amount1) * amount2)
 
   return {
