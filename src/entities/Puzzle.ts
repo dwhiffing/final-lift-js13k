@@ -34,10 +34,10 @@ export const Puzzle = () => {
 
     emojiTexts =
       puzzle.emojiCounts && floor != 13
-        ? placeTextInCircle(puzzle.emojiCounts, width / 2, height * 0.36, 70)
+        ? placeText(puzzle.emojiCounts, width / 2 - 50, height * 0.32)
         : []
 
-    text.y = puzzle.emojiCounts ? height * 0.55 : height * 0.5
+    text.y = puzzle.emojiCounts ? height * 0.65 : height * 0.5
   }
 
   const text = Text({
@@ -62,50 +62,52 @@ export const Puzzle = () => {
 }
 
 export const FRUIT_EMOJI = ['🍎', '🍌', '🍇', '🍓', '🍑']
-
 const generateEmojiPuzzle = (difficulty = 1) => {
-  const emojis = FRUIT_EMOJI.slice(0, difficulty + 1)
-  const counts = emojis.reduce((acc, emoji) => ({ ...acc, [emoji]: 0 }), {})
-
-  for (let i = 0; i < 20 + difficulty * 5; i++) counts[sample(emojis)]++
-  const correctAnswer = Object.keys(counts).reduce((a, b) =>
-    counts[a] > counts[b] ? a : b,
+  const emojis = shuffle(FRUIT_EMOJI).slice(0, 1 + Math.ceil(difficulty / 3))
+  const total = clamp(6, 35, difficulty * 4)
+  const uniqueCounts = Array.from({ length: emojis.length }, (_, i) => i)
+  const sum = uniqueCounts.reduce((sum, n) => sum + n)
+  const base = Math.floor((total - sum) / emojis.length)
+  const scaledCounts = uniqueCounts.map((_, i) => i + base)
+  const shuffledCounts = shuffle(scaledCounts)
+  const counts = emojis.reduce(
+    (acc, emoji, index) => ({ ...acc, [emoji]: shuffledCounts[index] }),
+    {},
   )
+
+  const askForMost = Math.random() < 0.5
+  const correctAnswer = Object.keys(counts).reduce((a, b) =>
+    askForMost
+      ? counts[a] > counts[b]
+        ? a
+        : b
+      : counts[a] < counts[b]
+        ? a
+        : b,
+  )
+
   return {
     emojiCounts: counts,
-    text: 'Which are there most of?',
+    text: `Which are there ${askForMost ? 'most' : 'fewest'} of?`,
     options: shuffle(Object.keys(counts)),
     correctAnswer,
   }
 }
-
-const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
-  const angleStep = (2 * Math.PI) / Object.keys(emojiCounts).length
-  const effectiveAngleStep = angleStep - angleStep * 0.1
-
+const placeText = (emojiCounts, x, y) => {
   const texts = []
-  let currentAngle = 0
-
+  let j = 0
   Object.entries(emojiCounts).forEach(([emoji, count]) => {
     for (let i = 0; i < count; i++) {
-      const angleEnd = currentAngle + effectiveAngleStep
-      const a = angleEnd - currentAngle
       texts.push(
         Text({
-          color: '#fff',
           text: emoji,
           font: '24px Arial',
-          x:
-            centerX +
-            Math.random() * radius * Math.cos(Math.random() * a + currentAngle),
-          y:
-            centerY +
-            Math.random() * radius * Math.sin(Math.random() * a + currentAngle),
+          x: x + (j % 5) * 26,
+          y: y + Math.floor(j / 5) * 26,
         }),
       )
+      j++
     }
-
-    currentAngle += angleStep
   })
 
   return texts
