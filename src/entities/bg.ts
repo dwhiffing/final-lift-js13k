@@ -38,7 +38,7 @@ export const Background = ({ canvas }) => {
   }
 
   const buttons = []
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 12; i++) {
     buttons.push(new Button())
   }
 
@@ -101,7 +101,7 @@ export const Background = ({ canvas }) => {
 
     buttons.forEach((b, i) => {
       b.x = x + (i % cols) * t
-      b.y = y + t * Math.floor(i / cols)
+      b.y = 55 + y - t * Math.floor(i / cols)
     })
   }
 
