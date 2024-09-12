@@ -107,7 +107,8 @@ export const GameScene = ({ canvas }) => {
       value += diff * -1
       timer = Math.min(99, timer + diff)
       background.timer.setText(`${timer}`)
-      playSound('click')
+      const sound = diff < 0 && timer < 10 ? 'tickUrgent' : 'tick'
+      playSound(sound)
       await delayedCall(100)
     }
   }
@@ -273,7 +274,7 @@ export const GameScene = ({ canvas }) => {
       setTimer(START_TIME, true)
       onFadeMenu()
       startFloor(true)
-      playSound('click')
+      playSound('startGame')
     }
     if (phase === Phase.SOLVE_PUZZLE && camera.zoom >= 2) {
       // @ts-ignore
