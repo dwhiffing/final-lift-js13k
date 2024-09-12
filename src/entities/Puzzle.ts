@@ -262,7 +262,8 @@ const generateEquationPuzzle = (difficulty = 1) => {
 // Helper function to generate options
 const generateOptions = (correctAnswer, errorRange, optionCount) => {
   const options = [+correctAnswer]
-  while (options.length < optionCount) {
+  let tries = 0
+  while (options.length < optionCount && tries++ < 99) {
     const wrongAnswer = +correctAnswer + randInt(-errorRange, errorRange)
     if (!options.includes(wrongAnswer) && wrongAnswer > 0)
       options.push(wrongAnswer)
