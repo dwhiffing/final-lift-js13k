@@ -44,11 +44,10 @@ export let camera = {
   },
 }
 
-let music,
-  a = document.getElementsByTagName('a')[0],
+let a = document.getElementsByTagName('a')[0],
   baseAlpha = 0.75
 a.onclick = () => {
-  music.playbackRate.value = a.innerHTML === 'mute' ? 0 : 1
+  console.log('wtf')
   a.innerHTML = a.innerHTML === 'mute' ? 'unmute' : 'mute'
   // @ts-ignore
   zzfxV = zzfxV ? 0 : 0.3
