@@ -226,7 +226,9 @@ export const GameScene = ({ canvas }) => {
     const isFinalAnswer = answerIndex === correctAnswers.length - 1
     if (!isCorrect && phase === Phase.SOLVE_PUZZLE) {
       setTimer(-3)
-      navigator.vibrate(BASE_DURATION / 2)
+      try {
+        navigator.vibrate(BASE_DURATION / 2)
+      } catch (e) {}
       camera.shake(7, 1, BASE_DURATION / 2)
     }
 
