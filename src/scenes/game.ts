@@ -209,7 +209,7 @@ export const GameScene = ({ canvas }) => {
 
     await background.toggleDoor(1, 0)
     await fade(1, baseAlpha)
-    startText.text = `Score: ${score}`
+    startText.text = `Score: ${score} floors`
     onFadeMenu(0, 1)
     phase = Phase.MENU
   }
