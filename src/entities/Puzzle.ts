@@ -112,7 +112,7 @@ const placeTextInCircle = (emojiCounts, centerX, centerY, radius) => {
 }
 const generateWordPuzzle = (difficulty = 1) => {
   const isLongest = randInt(0, 1)
-  const shuffledWords = shuffle(FRUITS).slice(0, difficulty + 2)
+  const shuffledWords = FRUITS.slice(0, clamp(2, 5, difficulty + 1))
 
   const questionType = randInt(0, 2)
   const countCharacters = (str, regex) => (str.match(regex) || []).length
@@ -129,8 +129,8 @@ const generateWordPuzzle = (difficulty = 1) => {
   const questionLabels = ['vowels', 'consonants', 'letters']
 
   return {
-    text: `${shuffledWords.join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
-    options: generateOptions(correctAnswer, difficulty, 3),
+    text: `${shuffle(shuffledWords).join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
+    options: generateOptions(correctAnswer, difficulty),
     correctAnswer: correctAnswer,
   }
 }
@@ -145,7 +145,7 @@ const generateRatioPuzzle = (difficulty = 1) => {
 
   return {
     text: `${amount1} ${fruit}s cost $${cost}. How much for ${amount2}?`,
-    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
+    options: generateOptions(correctAnswer, difficulty),
     correctAnswer: correctAnswer,
   }
 }
@@ -165,7 +165,7 @@ const generateSequencePuzzle = (difficulty = 1) => {
   const correctAnswer = sequence.pop()
   return {
     text: sequence.concat('_').join(', '),
-    options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
+    options: generateOptions(correctAnswer, difficulty),
     correctAnswer: correctAnswer,
   }
 }
@@ -212,13 +212,16 @@ const generateEquationPuzzle = (difficulty = 1) => {
   const missingIndex = sample(eq.map((_, i) => i).filter((i) => !isNaN(+eq[i])))
   return {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
-    options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
+    options: generateOptions(eq[missingIndex], difficulty),
     correctAnswer: eq[missingIndex],
   }
 }
 
 // Helper function to generate options
-const generateOptions = (correctAnswer, errorRange, optionCount) => {
+const generateOptions = (correctAnswer, difficulty) => {
+  const errorRange = difficulty * 2
+  const optionCount = difficulty + 2
+
   const options = [+correctAnswer]
   while (options.length < optionCount) {
     const wrongAnswer = +correctAnswer + randInt(-errorRange, errorRange)
