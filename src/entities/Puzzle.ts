@@ -56,6 +56,9 @@ export const Puzzle = () => {
   return {
     nextPuzzle,
     setText,
+    reset: () => {
+      puzzleQueue = []
+    },
     getCorrectAnswer: () => correctAnswer,
     getOptions: () => options,
     render() {

@@ -272,6 +272,7 @@ export const GameScene = ({ canvas }) => {
       phase = Phase.TIME_PAUSED
       floor = 1
       score = 0
+      background.puzzle.reset()
       updateDifficulty()
       setTimer(START_TIME, true)
       onFadeMenu()
