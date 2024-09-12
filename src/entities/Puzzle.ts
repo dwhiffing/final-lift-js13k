@@ -1,12 +1,14 @@
 import { clamp, getCanvas, Text } from 'kontra'
 import { shuffle, randInt, sample } from '../utils'
 
+const BASE_REWARD = 5
 let puzzleQueue = []
 export const Puzzle = () => {
   const { width, height } = getCanvas()
   let options: string[] = [],
     correctAnswer = '-1',
-    texts = []
+    texts = [],
+    reward = BASE_REWARD
 
   const setText = (s = '', color = '#fff') => {
     text.text = s
@@ -31,6 +33,7 @@ export const Puzzle = () => {
 
     const puzzle = generator(difficulty, floor)
     options = puzzle.options.map(String)
+    reward = puzzle.reward
     correctAnswer = Array.isArray(puzzle.correctAnswer)
       ? puzzle.correctAnswer.map(String)
       : [`${puzzle.correctAnswer}`]
@@ -61,6 +64,7 @@ export const Puzzle = () => {
     },
     getCorrectAnswer: () => correctAnswer,
     getOptions: () => options,
+    getReward: () => reward,
     render() {
       text.render()
       texts.forEach((t) => t.render())
@@ -98,6 +102,7 @@ const generateLetterPuzzle = (difficulty = 1) => {
     text: `Which are there ${askForMost ? 'most' : 'fewest'} of?`,
     options: shuffle(Object.keys(counts)),
     correctAnswer,
+    reward: BASE_REWARD,
   }
 }
 const placeText = (letterCounts: Record<string, number>, x, y) => {
@@ -145,6 +150,7 @@ const generateWordPuzzle = (difficulty = 1) => {
     text: `${shuffle(shuffledWords).join(', ')}\n\nHow many ${questionLabels[questionType]} in the ${isLongest ? 'long' : 'short'}est word?`,
     options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
+    reward: BASE_REWARD + 1,
   }
 }
 
@@ -161,6 +167,7 @@ const generateRatioPuzzle = (difficulty = 1) => {
     text: `${amount1} ${fruit}s cost $${cost}. How much for ${amount2}?`,
     options: generateOptions(correctAnswer, difficulty * 2, difficulty + 1),
     correctAnswer: correctAnswer,
+    reward: BASE_REWARD + 3,
   }
 }
 
@@ -181,6 +188,7 @@ const generateSequencePuzzle = (difficulty = 1) => {
     text: sequence.concat('_').join(', '),
     options: generateOptions(correctAnswer, difficulty * 2, difficulty + 2),
     correctAnswer: correctAnswer,
+    reward: BASE_REWARD,
   }
 }
 
@@ -193,6 +201,7 @@ const generateSpeedPuzzle = (difficulty = 1) => {
     text: `Press from ${largestFirst ? 'largest' : 'smallest'} to ${!largestFirst ? 'largest' : 'smallest'}`,
     options: shuffle(options),
     correctAnswer: sortedOptions,
+    reward: BASE_REWARD,
   }
 }
 
@@ -211,6 +220,7 @@ const generateFloorPuzzle = (difficulty = 1, floor = 1) => {
     text: 'What floor are you on?',
     options: options,
     correctAnswer: floor,
+    reward: BASE_REWARD,
   }
 }
 
@@ -240,6 +250,7 @@ const generateEquationPuzzle = (difficulty = 1) => {
     text: eq.map((s, i) => (i === missingIndex ? '_' : s)).join(' '),
     options: generateOptions(eq[missingIndex], difficulty * 2, difficulty + 2),
     correctAnswer: eq[missingIndex],
+    reward: BASE_REWARD + 1,
   }
 }
 

@@ -188,11 +188,12 @@ export const GameScene = ({ canvas }) => {
   }
 
   const finishFloor = async () => {
-    // TODO: change score/time based on difficulty
     score += 1
-    setTimer(5)
-    updateDifficulty()
+    phase = 0
+    await setTimer(background.puzzle.getReward())
+    phase = 2
 
+    updateDifficulty()
     background.updateButtons(getFloorButtons(floor, difficulty))
     await togglePan(true)
   }
@@ -242,7 +243,7 @@ export const GameScene = ({ canvas }) => {
       if (isCorrect) {
         if (isFinalAnswer) {
           phase = Phase.CHOOSE_FLOOR
-          await delayedCall(BASE_DURATION * 2)
+          await delayedCall(BASE_DURATION)
           await finishFloor()
         } else {
           background.updateButtons(
